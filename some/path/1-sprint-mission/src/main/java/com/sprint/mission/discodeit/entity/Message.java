@@ -4,12 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class Message {
+public class Message extends BaseEntity {
     private final UUID messageId;
-    private final User user;
-    private final Channel channel;
-    private final Long createdAt;
-    private Long updatedAt;
+    private User user;
+    private Channel channel;
     private String contents;
 
 
@@ -33,15 +31,35 @@ public class Message {
         this.contents = messageContents;
         this.user = user;
         this.channel = channel;
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
-        user.getUsersMessages().add(this);
+        user.getmessages().add(this);
         channel.getChannelMessages().add(this);
     }
 
+    public void addChannel(Channel channel) {
+        if(this.channel == null) {
+            this.channel = channel;
+            channel.addMessage(this);
+        }
+    }
 
-    public void setUpdatedAt() {
-        this.updatedAt = System.currentTimeMillis();
+    public void removeChannel(Channel channel) {
+        if(this.channel != channel) {
+            this.channel = null;
+            channel.removeMessage(this);
+        }
+    }
+
+    public void addUser(User user) {
+        if(this.user == null) {
+            this.user = user;
+            user.addMessage(this);
+        }
+    }
+    public void removeUser(User user) {
+        if(this.user != user) {
+            this.user = null;
+            user.removeMessage(this);
+        }
     }
 
     public void setContents(String contents) {
@@ -64,11 +82,4 @@ public class Message {
         return channel;
     }
 
-    public Long getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public Long getCreatedAt() {
-        return createdAt;
-    }
 }

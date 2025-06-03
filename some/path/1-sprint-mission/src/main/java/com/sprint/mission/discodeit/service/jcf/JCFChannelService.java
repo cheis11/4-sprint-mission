@@ -28,14 +28,14 @@ public class JCFChannelService implements ChannelService {
     }
 //optional로 바꾸기
     @Override
-    public Optional<Channel> getChannel(UUID channelId) {
+    public Optional<Channel> findChannelById(UUID channelId) {
         return data.stream()
                 .filter(channel -> channel.getChannelId().equals(channelId))
                 .findFirst();
     }
 
     @Override
-    public List<Channel> getChannelContains(String channelName) {
+    public List<Channel> findChannelsByNameContains(String channelName) {
         return data.stream()
                 .filter(channel -> channel.getChannelName().contains(channelName))
                 .collect(Collectors.toList());
@@ -49,15 +49,15 @@ public class JCFChannelService implements ChannelService {
     }
 
     @Override
-    public List<User> getUserInChannel(Channel channel) {
+    public List<User> getUsersInChannel(Channel channel) {
         return data.stream()
                 .filter(c -> c.getChannelId().equals(channel.getChannelId()))
-                .flatMap(c -> c.getChannelsUsers().stream())
+                .flatMap(c -> c.getUsers().stream())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Message> getMessagesToChannel(Channel channel) {
+    public List<Message> getMessagesInChannel(Channel channel) {
         return data.stream()
                 .filter(c -> c.getChannelId().equals(channel.getChannelId()))
                 .flatMap(c -> c.getChannelMessages().stream())
@@ -66,7 +66,7 @@ public class JCFChannelService implements ChannelService {
 
 
     @Override
-    public void updateChannel(UUID ChannelId, String updatedText) {
+    public void updateChannelName(UUID ChannelId, String updatedText) {
         data.stream()
                 .filter(channel -> channel.getChannelId().equals(ChannelId))
                 .findFirst()
@@ -75,25 +75,15 @@ public class JCFChannelService implements ChannelService {
                     channel.setUpdatedAt();
                 });
     }
-
+    //void로 바꿀것
     @Override
-    public void addUser(Channel channel, User user) {
-        if(!channel.getChannelsUsers().contains(user)) {
-            channel.getChannelsUsers().add(user);
-            user.getUsersChannels().add(channel);
-            channel.setUpdatedAt();
-            System.out.println(user.getUserName() + "님이 " + channel.getChannelName() + " 채널에 참가하셨습니다.");
-        }
+    public void joinUser(Channel channel, User user) {
+        channel.addUser(user);
     }
 
     @Override
-    public void removeUser(Channel channel, User user) {
-        if(channel.getChannelsUsers().contains(user)) {
-            channel.getChannelsUsers().remove(user);
-            user.getUsersChannels().remove(channel);
-            channel.setUpdatedAt();
-            System.out.println(user.getUserName() + "님이 " + channel.getChannelName() + " 채널에서 퇴장하셨습니다.");
-        }
+    public void leaveUser(Channel channel, User user) {
+        channel.removeUser(user);
     }
 
     @Override

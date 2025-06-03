@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.service.jcf;
 
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.MessageService;
 
 import java.util.ArrayList;
@@ -30,14 +31,14 @@ public class JCFMessageService implements MessageService {
     }
 
     @Override
-    public Optional<Message> getMessage(UUID messageId) {
+    public Optional<Message> findMessageById(UUID messageId) {
         return data.stream()
                 .filter(message -> message.getMessageId().equals(messageId))
                 .findFirst();
     }
 
     @Override
-    public List<Message> getMessageContains(String MessageContents) {
+    public List<Message> findMessagesByContentContains(String MessageContents) {
         return data.stream()
                 .filter(message -> message.getContent().contains(MessageContents))
                 .collect(Collectors.toList());
@@ -57,6 +58,11 @@ public class JCFMessageService implements MessageService {
     @Override
     public void deleteMessage(Message message) {
         data.remove(message);
+    }
+
+    @Override
+    public void deleteAllMessagesByUser(User user) {
+        user.removeAllMessages();
     }
 
 }

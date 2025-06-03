@@ -7,17 +7,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class User {
+public class User extends BaseEntity {
     private final UUID userId;
-    private final Long createdAt;
-    private final List<Channel> usersChannels;
-    private final List<Message> usersMessages;
-    private Long updatedAt;
+    private final List<Channel> channels;
+    private final List<Message> messages;
     private String userName;
 
     @Override
     public String toString() {
-        String channelNames = usersChannels.stream()
+        String channelNames = channels.stream()
                 .map(Channel::getChannelName)
                 .collect(Collectors.joining(", "));
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -26,7 +24,7 @@ public class User {
 
         return "User{" +"\n"+
                 "userName=" + userName +"\n"+
-                "UsersChannels=" + channelNames +"\n"+
+                "channels=" + channelNames +"\n"+
                 "createdAt=" + created +"\n"+
                 "updatedAt=" + updated +"\n"+
                 '}'+"\n";
@@ -35,24 +33,45 @@ public class User {
     public User(String userName) {
         this.userId = UUID.randomUUID();
         this.userName = userName;
-        createdAt = System.currentTimeMillis();
-        updatedAt = System.currentTimeMillis();
-        usersChannels = new ArrayList<>();
-        usersMessages = new ArrayList<>();
+        channels = new ArrayList<>();
+        messages = new ArrayList<>();
     }
 
+    public void addChannel(Channel channel) {
+        if(!channels.contains(channel)) {
+            channels.add(channel);
+            channel.addUser(this);
+        }
+    }
+    public void removeChannel(Channel channel) {
+        if(channels.contains(channel)) {
+            channels.remove(channel);
+            channel.removeUser(this);
+        }
+    }
 
-    public void setUpdatedAt() {
-        this.updatedAt = System.currentTimeMillis();;
+    public void addMessage(Message message) {
+        if(!messages.contains(message)) {
+            messages.add(message);
+            message.addUser(this);
+        }
+    }
+    public void removeMessage(Message message) {
+        if(messages.contains(message)) {
+            messages.remove(message);
+            message.removeUser(this);
+        }
+    }
+    public void removeAllMessages(){
+        messages.clear();
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-
-    public List<Message> getUsersMessages() {
-        return usersMessages;
+    public List<Message> getmessages() {
+        return messages;
     }
 
     public UUID getUserId() {
@@ -63,16 +82,8 @@ public class User {
         return userName;
     }
 
-    public Long getCreatedAt() {
-        return createdAt;
-    }
-
-    public Long getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public List<Channel> getUsersChannels() {
-        return usersChannels;
+    public List<Channel> getchannels() {
+        return channels;
     }
 
 }

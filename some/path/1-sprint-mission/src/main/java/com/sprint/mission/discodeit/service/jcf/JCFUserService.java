@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
+import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.UserService;
@@ -30,14 +31,14 @@ public class JCFUserService implements UserService {
     }
 
     @Override
-    public Optional<User> getUser(UUID UserId) {
+    public Optional<User> findUserById(UUID UserId) {
         return data.stream()
                 .filter(user -> user.getUserId().equals(UserId))
                 .findFirst();
     }
 
     @Override
-    public List<User> getUserContains(String UserName) {
+    public List<User> findUsersByNameContains(String UserName) {
         return data.stream()
                 .filter(user -> user.getUserName().contains(UserName))
                 .collect(Collectors.toList());
@@ -60,7 +61,8 @@ public class JCFUserService implements UserService {
     }
 
     @Override
-    public List<Message> getMessageToUser(User user) {
-        return user.getUsersMessages();
+    public List<Message> findMessagesByUser(User user) {
+        return user.getmessages();
     }
+
 }

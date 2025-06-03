@@ -45,7 +45,7 @@ public class JavaApplication {
         Message message11 = messageService.addMessage(new Message(
                 "what",
                 userAlice,
-                channelAcrobatic
+                channelBasic
         ));
 
         Message message2 = messageService.addMessage(new Message(
@@ -56,7 +56,7 @@ public class JavaApplication {
         Message message22 = messageService.addMessage(new Message(
                 "for",
                 userBob,
-                channelBasic
+                channelCrow
         ));
 
         Message message3 = messageService.addMessage(new Message(
@@ -67,7 +67,7 @@ public class JavaApplication {
         Message message33 = messageService.addMessage(new Message(
                 "use?",
                 userCharlie,
-                channelCrow
+                channelAcrobatic
         ));
 
         //데이터 조회
@@ -83,22 +83,15 @@ public class JavaApplication {
                 .forEach(System.out::println);
         System.out.println();
 
-        //채널에 있는 모든 유저 출력
-        System.out.println(channelAcrobatic.getChannelName() + "'s users: " +
-                channelService.getUserInChannel(channelAcrobatic).stream()
-                        .map(User::getUserName)
-                        .collect(Collectors.joining("\n")));
-        System.out.println();
-
         //유저가 쓴 모든 메세지 출력
         System.out.println(userBob.getUserName() + "'s messages: ");
-        userService.getMessageToUser(userBob)
+        userService.findMessagesByUser(userBob)
                 .forEach(message -> System.out.println(message.getContent()));
         System.out.println();
 
         //채널에서 쓴 모든 메세지 출력
         System.out.println(userAlice.getUserName() + "'s messages: ");
-        channelService.getMessagesToChannel(channelAcrobatic)
+        channelService.getMessagesInChannel(channelAcrobatic)
                 .forEach(message -> System.out.println(message.getContent()));
         System.out.println();
 
@@ -109,21 +102,21 @@ public class JavaApplication {
         System.out.println();
 
         //단건 조회
-        Optional<User> result1 = userService.getUser(userAlice.getUserId());
+        Optional<User> result1 = userService.findUserById(userAlice.getUserId());
         if (result1.isPresent()) {
             System.out.println("유저를 찾았습니다: " + result1.get().getUserName());
         }else{
             System.out.println("해당 유저는 존재하지 않습니다.");
         }
 
-        Optional<Channel> result2 = channelService.getChannel(channelAcrobatic.getChannelId());
+        Optional<Channel> result2 = channelService.findChannelById(channelAcrobatic.getChannelId());
         if (result2.isPresent()) {
             System.out.println("채널을 찾았습니다: " + result2.get().getChannelName());
         } else {
             System.out.println("해당 채널이 존재하지 않습니다.");
         }
 
-        Optional<Message> result3 = messageService.getMessage(message1.getMessageId());
+        Optional<Message> result3 = messageService.findMessageById(message1.getMessageId());
         if(result3.isPresent()){
             System.out.println("메세지를 찾았습니다: " + result3.get().getContent());
         }else{
@@ -134,21 +127,21 @@ public class JavaApplication {
 
         //포함 조회
         System.out.println("a in Username: ");
-        userService.getUserContains("a")
+        userService.findUsersByNameContains("a")
                 .forEach(user ->  System.out.println(user.getUserName()));
         System.out.println();
 
 
         //채널에 유저 참가
-        channelService.addUser(channelAcrobatic, userBob);
-        channelService.addUser(channelBasic,userCharlie);
-        channelService.addUser(channelAcrobatic,userDave);
-        channelService.addUser(channelBasic,userDave);
-        channelService.addUser(channelCrow,userDave);
+        channelService.joinUser(channelAcrobatic, userBob);
+        channelService.joinUser(channelBasic, userCharlie);
+        channelService.joinUser(channelAcrobatic, userDave);
+        channelService.joinUser(channelBasic, userDave);
+        channelService.joinUser(channelCrow, userDave);
 
         //채널에서 유저 삭제
-        channelService.removeUser(channelBasic,userDave);
-        channelService.removeUser(channelCrow,userDave);
+        channelService.leaveUser(channelBasic, userDave);
+        channelService.leaveUser(channelCrow, userDave);
 
 
         userService.getUsers()
@@ -167,7 +160,7 @@ public class JavaApplication {
 
         // 수정할 이름 쓰면 수정
         userService.updateUser(userAlice.getUserId(),"Downer");
-        channelService.updateChannel(channelAcrobatic.getChannelId(),"Dean");
+        channelService.updateChannelName(channelAcrobatic.getChannelId(),"Dean");
         messageService.updateMessage(message3.getMessageId(),"play?");
 
 

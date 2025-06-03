@@ -7,18 +7,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Channel {
+public class Channel extends BaseEntity {
     private final UUID channelId;
-    private final Long createdAt;
-    private final List<User> channelsUsers;
-    private final List<Message> channelsMessages;
-    private Long updatedAt;
+    private List<User> users;
+    private List<Message> messages;
     private String channelName;
 
 
     @Override
     public String toString() {
-        String userNames = channelsUsers.stream()
+        String userNames = users.stream()
                 .map(User::getUserName)
                 .collect(Collectors.joining(", "));
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -36,25 +34,45 @@ public class Channel {
     public Channel(String channelName, User user) {
         channelId = UUID.randomUUID();
         this.channelName = channelName;
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
-        channelsUsers = new ArrayList<>();
-        channelsUsers.add(user);
-        channelsMessages = new ArrayList<>();
-        user.getUsersChannels().add(this);
+        users = new ArrayList<>();
+        users.add(user);
+        messages = new ArrayList<>();
+        user.getchannels().add(this);
     }
 
-
-    public void setUpdatedAt() {
-        this.updatedAt = System.currentTimeMillis();
+    public void addUser(User user) {
+        if(!users.contains(user)) {
+            users.add(user);
+            user.addChannel(this);
+        }
     }
+    public void removeUser(User user) {
+        if(users.contains(user)) {
+            users.remove(user);
+            user.removeChannel(this);
+        }
+    }
+
+    public void addMessage(Message message) {
+        if(!messages.contains(message)) {
+            messages.add(message);
+            message.addChannel(this);
+        }
+    }
+    public void removeMessage(Message message) {
+        if(messages.contains(message)) {
+            messages.remove(message);
+            message.removeChannel(this);
+        }
+    }
+
 
     public void setChannelName(String channelName) {
         this.channelName = channelName;
     }
 
     public List<Message> getChannelMessages() {
-        return channelsMessages;
+        return messages;
     }
 
     public UUID getChannelId() {
@@ -73,8 +91,8 @@ public class Channel {
         return updatedAt;
     }
 
-    public List<User> getChannelsUsers() {
-        return channelsUsers;
+    public List<User> getUsers() {
+        return users;
     }
 
 }
