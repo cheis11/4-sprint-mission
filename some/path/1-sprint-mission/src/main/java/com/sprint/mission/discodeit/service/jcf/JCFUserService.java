@@ -1,8 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
-import com.sprint.mission.discodeit.entity.Channel;
-import com.sprint.mission.discodeit.entity.Message;
-import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.entity.*;
 import com.sprint.mission.discodeit.service.UserService;
 
 import java.util.ArrayList;
@@ -27,6 +25,7 @@ public class JCFUserService implements UserService {
     @Override
     public List<User> getUsers() {
         return data.stream()
+                .filter(user -> user.getState()!=UserState.DELETED)
                 .collect(Collectors.toList());
     }
 
@@ -34,6 +33,7 @@ public class JCFUserService implements UserService {
     public Optional<User> findUserById(UUID UserId) {
         return data.stream()
                 .filter(user -> user.getUserId().equals(UserId))
+                .filter(user -> user.getState()!=UserState.DELETED)
                 .findFirst();
     }
 
@@ -41,6 +41,7 @@ public class JCFUserService implements UserService {
     public List<User> findUsersByNameContains(String UserName) {
         return data.stream()
                 .filter(user -> user.getUserName().contains(UserName))
+                .filter(user -> user.getState()!=UserState.DELETED)
                 .collect(Collectors.toList());
     }
 
@@ -57,12 +58,15 @@ public class JCFUserService implements UserService {
 
     @Override
     public void deleteUser(User user) {
+        user.deletedUserState();
         data.remove(user);
     }
 
     @Override
     public List<Message> findMessagesByUser(User user) {
-        return user.getmessages();
+        return user.getMessages().stream()
+                .filter(message -> message.getState() != MessageState.DELETED)
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,8 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
-import com.sprint.mission.discodeit.entity.Channel;
-import com.sprint.mission.discodeit.entity.Message;
-import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.entity.*;
 import com.sprint.mission.discodeit.service.ChannelService;
 
 import java.util.*;
@@ -24,6 +22,7 @@ public class JCFChannelService implements ChannelService {
     @Override
     public List<Channel> getChannels() {
         return data.stream()
+                .filter(channel -> channel.getState() != ChannelState.DELETED)
                 .collect(Collectors.toList());
     }
 //optional로 바꾸기
@@ -31,6 +30,7 @@ public class JCFChannelService implements ChannelService {
     public Optional<Channel> findChannelById(UUID channelId) {
         return data.stream()
                 .filter(channel -> channel.getChannelId().equals(channelId))
+                .filter(channel -> channel.getState() != ChannelState.DELETED)
                 .findFirst();
     }
 
@@ -38,6 +38,7 @@ public class JCFChannelService implements ChannelService {
     public List<Channel> findChannelsByNameContains(String channelName) {
         return data.stream()
                 .filter(channel -> channel.getChannelName().contains(channelName))
+                .filter(channel -> channel.getState() != ChannelState.DELETED)
                 .collect(Collectors.toList());
     }
 
@@ -45,6 +46,7 @@ public class JCFChannelService implements ChannelService {
     public List<Message> getMessagesByUserInChannel(Channel channel, User user) {
         return channel.getChannelMessages().stream()
                 .filter(message -> message.getUser().equals(user))
+                .filter(message -> message.getState() != MessageState.DELETED)
                 .collect(Collectors.toList());
     }
 
@@ -53,6 +55,7 @@ public class JCFChannelService implements ChannelService {
         return data.stream()
                 .filter(c -> c.getChannelId().equals(channel.getChannelId()))
                 .flatMap(c -> c.getUsers().stream())
+                .filter(user -> user.getState()!=UserState.DELETED)
                 .collect(Collectors.toList());
     }
 
@@ -61,6 +64,7 @@ public class JCFChannelService implements ChannelService {
         return data.stream()
                 .filter(c -> c.getChannelId().equals(channel.getChannelId()))
                 .flatMap(c -> c.getChannelMessages().stream())
+                .filter(message -> message.getState() != MessageState.DELETED)
                 .collect(Collectors.toList());
     }
 

@@ -12,6 +12,7 @@ public class User extends BaseEntity {
     private final List<Channel> channels;
     private final List<Message> messages;
     private String userName;
+    private UserState state;
 
     @Override
     public String toString() {
@@ -24,6 +25,7 @@ public class User extends BaseEntity {
 
         return "User{" +"\n"+
                 "userName=" + userName +"\n"+
+                "userState=" + state +"\n"+
                 "channels=" + channelNames +"\n"+
                 "createdAt=" + created +"\n"+
                 "updatedAt=" + updated +"\n"+
@@ -35,6 +37,7 @@ public class User extends BaseEntity {
         this.userName = userName;
         channels = new ArrayList<>();
         messages = new ArrayList<>();
+        state = UserState.ONLINE;
     }
 
     public void addChannel(Channel channel) {
@@ -66,11 +69,27 @@ public class User extends BaseEntity {
         messages.clear();
     }
 
+
+    public void onlineUserState() {
+        state = UserState.ONLINE;
+    }
+    public void offlineUserState() {
+        state = UserState.OFFLINE;
+    }
+    public void deletedUserState() {
+        state = UserState.DELETED;
+    }
+
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public List<Message> getmessages() {
+    public UserState getState() {
+        return state;
+    }
+
+    public List<Message> getMessages() {
         return messages;
     }
 
@@ -82,8 +101,9 @@ public class User extends BaseEntity {
         return userName;
     }
 
-    public List<Channel> getchannels() {
+    public List<Channel> getChannels() {
         return channels;
     }
 
 }
+

@@ -9,6 +9,7 @@ public class Message extends BaseEntity {
     private User user;
     private Channel channel;
     private String contents;
+    private MessageState state;
 
 
     @Override
@@ -31,7 +32,7 @@ public class Message extends BaseEntity {
         this.contents = messageContents;
         this.user = user;
         this.channel = channel;
-        user.getmessages().add(this);
+        user.getMessages().add(this);
         channel.getChannelMessages().add(this);
     }
 
@@ -60,6 +61,21 @@ public class Message extends BaseEntity {
             this.user = null;
             user.removeMessage(this);
         }
+    }
+
+    public void visibleMessageState() {
+        state = MessageState.visible;
+    }
+    public void invisibleMessageState() {
+        state = MessageState.invisible;
+    }
+    public void deletedMessageState() {
+        state = MessageState.deleted;
+    }
+
+
+    public MessageState getState() {
+        return state;
     }
 
     public void setContents(String contents) {

@@ -12,7 +12,7 @@ public class Channel extends BaseEntity {
     private List<User> users;
     private List<Message> messages;
     private String channelName;
-
+    private ChannelState state;
 
     @Override
     public String toString() {
@@ -37,7 +37,7 @@ public class Channel extends BaseEntity {
         users = new ArrayList<>();
         users.add(user);
         messages = new ArrayList<>();
-        user.getchannels().add(this);
+        user.getChannels().add(this);
     }
 
     public void addUser(User user) {
@@ -65,10 +65,23 @@ public class Channel extends BaseEntity {
             message.removeChannel(this);
         }
     }
+    public void activateChannelState(){
+        state = ChannelState.activated;
+    }
+    public void deactivateChannelState(){
+        state = ChannelState.deactivated;
+    }
+    public void deleteChannelState(){
+        state = ChannelState.deleted;
+    }
 
 
     public void setChannelName(String channelName) {
         this.channelName = channelName;
+    }
+
+    public ChannelState getState() {
+        return state;
     }
 
     public List<Message> getChannelMessages() {

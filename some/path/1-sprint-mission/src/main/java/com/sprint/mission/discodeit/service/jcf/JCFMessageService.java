@@ -1,8 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
-import com.sprint.mission.discodeit.entity.Channel;
-import com.sprint.mission.discodeit.entity.Message;
-import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.entity.*;
 import com.sprint.mission.discodeit.service.MessageService;
 
 import java.util.ArrayList;
@@ -27,6 +25,7 @@ public class JCFMessageService implements MessageService {
     @Override
     public List<Message> getMessages() {
         return data.stream()
+                .filter(message -> message.getState() != MessageState.DELETED)
                 .collect(Collectors.toList());
     }
 
@@ -34,6 +33,7 @@ public class JCFMessageService implements MessageService {
     public Optional<Message> findMessageById(UUID messageId) {
         return data.stream()
                 .filter(message -> message.getMessageId().equals(messageId))
+                .filter(message -> message.getState() != MessageState.DELETED)
                 .findFirst();
     }
 
@@ -41,6 +41,7 @@ public class JCFMessageService implements MessageService {
     public List<Message> findMessagesByContentContains(String MessageContents) {
         return data.stream()
                 .filter(message -> message.getContent().contains(MessageContents))
+                .filter(message -> message.getState() != MessageState.DELETED)
                 .collect(Collectors.toList());
     }
 
