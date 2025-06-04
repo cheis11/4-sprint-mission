@@ -64,13 +64,13 @@ public class Message extends BaseEntity {
     }
 
     public void visibleMessageState() {
-        state = MessageState.visible;
+        state = MessageState.VISIBLE;
     }
     public void invisibleMessageState() {
-        state = MessageState.invisible;
+        state = MessageState.INVISIBLE;
     }
     public void deletedMessageState() {
-        state = MessageState.deleted;
+        state = MessageState.DELETED;
     }
 
 

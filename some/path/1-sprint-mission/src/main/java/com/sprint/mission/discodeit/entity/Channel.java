@@ -66,13 +66,13 @@ public class Channel extends BaseEntity {
         }
     }
     public void activateChannelState(){
-        state = ChannelState.activated;
+        state = ChannelState.ACTIVATED;
     }
     public void deactivateChannelState(){
-        state = ChannelState.deactivated;
+        state = ChannelState.DEACTIVATED;
     }
     public void deleteChannelState(){
-        state = ChannelState.deleted;
+        state = ChannelState.DELETED;
     }
 
 

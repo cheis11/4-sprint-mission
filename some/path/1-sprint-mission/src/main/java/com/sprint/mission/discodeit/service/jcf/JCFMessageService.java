@@ -48,6 +48,7 @@ public class JCFMessageService implements MessageService {
     @Override
     public void updateMessage(UUID messageId,String updatedText) {
         data.stream()
+                .filter(message -> message.getState() != MessageState.DELETED)
                 .filter(message -> message.getMessageId().equals(messageId))
                 .findFirst()
                 .ifPresent(message -> {
@@ -58,11 +59,17 @@ public class JCFMessageService implements MessageService {
 
     @Override
     public void deleteMessage(Message message) {
-        data.remove(message);
+        if(message.getState() != MessageState.DELETED) {
+            message.deletedMessageState();
+            data.remove(message);
+        }
     }
 
     @Override
     public void deleteAllMessagesByUser(User user) {
+        user.getMessages().stream()
+                .filter(message -> message.getState() != MessageState.DELETED)
+                .forEach(Message::deletedMessageState);
         user.removeAllMessages();
     }
 

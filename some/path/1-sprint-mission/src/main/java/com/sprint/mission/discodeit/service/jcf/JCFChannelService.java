@@ -72,6 +72,7 @@ public class JCFChannelService implements ChannelService {
     @Override
     public void updateChannelName(UUID ChannelId, String updatedText) {
         data.stream()
+                .filter(channel -> channel.getState() != ChannelState.DELETED)
                 .filter(channel -> channel.getChannelId().equals(ChannelId))
                 .findFirst()
                 .ifPresent(channel -> {
@@ -79,19 +80,25 @@ public class JCFChannelService implements ChannelService {
                     channel.setUpdatedAt();
                 });
     }
-    //void로 바꿀것
     @Override
     public void joinUser(Channel channel, User user) {
-        channel.addUser(user);
+        if(channel.getState() != ChannelState.DELETED) {
+            channel.addUser(user);
+        }
     }
 
     @Override
     public void leaveUser(Channel channel, User user) {
-        channel.removeUser(user);
+        if(channel.getState() != ChannelState.DELETED) {
+            channel.removeUser(user);
+        }
     }
 
     @Override
     public void deleteChannel(Channel channel) {
-        data.remove(channel);
+        if(channel.getState() != ChannelState.DELETED) {
+            channel.deleteChannelState();
+            data.remove(channel);
+        }
     }
 }

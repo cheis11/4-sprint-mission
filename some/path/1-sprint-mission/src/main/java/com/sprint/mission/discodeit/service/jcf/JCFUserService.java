@@ -48,6 +48,7 @@ public class JCFUserService implements UserService {
     @Override
     public void updateUser(UUID userId, String updatedText) {
         data.stream()
+                .filter(user -> user.getState()!=UserState.DELETED)
                 .filter(user -> user.getUserId().equals(userId))
                 .findFirst()
                 .ifPresent(user -> {
@@ -58,8 +59,10 @@ public class JCFUserService implements UserService {
 
     @Override
     public void deleteUser(User user) {
-        user.deletedUserState();
-        data.remove(user);
+        if(user.getState()!=UserState.DELETED) {
+            user.deletedUserState();
+            data.remove(user);
+        }
     }
 
     @Override
