@@ -36,6 +36,7 @@ public class Message extends BaseEntity {
         channel.getChannelMessages().add(this);
     }
 
+    //양방향 연결
     public void addChannel(Channel channel) {
         if(this.channel == null) {
             this.channel = channel;
@@ -63,6 +64,7 @@ public class Message extends BaseEntity {
         }
     }
 
+    //상태
     public void visibleMessageState() {
         state = MessageState.VISIBLE;
     }

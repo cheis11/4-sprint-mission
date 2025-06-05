@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.service.jcf.JCFChannelService;
 import com.sprint.mission.discodeit.service.jcf.JCFMessageService;
 import com.sprint.mission.discodeit.service.jcf.JCFUserService;
 
+//팩토리 패턴 구현
 public class ServiceFactory {
     public static UserService createUserService(){
         return new JCFUserService();

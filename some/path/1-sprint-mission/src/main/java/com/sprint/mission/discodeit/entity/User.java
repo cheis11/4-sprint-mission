@@ -40,6 +40,7 @@ public class User extends BaseEntity {
         state = UserState.ONLINE;
     }
 
+    //양방향 연결
     public void addChannel(Channel channel) {
         if(!channels.contains(channel)) {
             channels.add(channel);
@@ -65,11 +66,8 @@ public class User extends BaseEntity {
             message.removeUser(this);
         }
     }
-    public void removeAllMessages(){
-        messages.clear();
-    }
 
-
+    //상태
     public void onlineUserState() {
         state = UserState.ONLINE;
     }
@@ -80,6 +78,10 @@ public class User extends BaseEntity {
         state = UserState.DELETED;
     }
 
+
+    public void removeAllMessages(){
+        messages.clear();
+    }
 
     public void setUserName(String userName) {
         this.userName = userName;

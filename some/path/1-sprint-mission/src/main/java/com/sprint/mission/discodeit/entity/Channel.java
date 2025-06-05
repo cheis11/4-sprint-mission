@@ -40,6 +40,7 @@ public class Channel extends BaseEntity {
         user.getChannels().add(this);
     }
 
+    //양방향 연결
     public void addUser(User user) {
         if(!users.contains(user)) {
             users.add(user);
@@ -65,13 +66,15 @@ public class Channel extends BaseEntity {
             message.removeChannel(this);
         }
     }
-    public void activateChannelState(){
+
+    //상태
+    public void activateChannelState() {
         state = ChannelState.ACTIVATED;
     }
-    public void deactivateChannelState(){
+    public void deactivateChannelState() {
         state = ChannelState.DEACTIVATED;
     }
-    public void deleteChannelState(){
+    public void deleteChannelState() {
         state = ChannelState.DELETED;
     }
 
