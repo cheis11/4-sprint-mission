@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.entity;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,10 +8,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Channel extends BaseEntity {
+public class Channel extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final UUID channelId;
-    private List<User> users;
-    private List<Message> messages;
+    private List<User> users = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
     private String channelName;
     private ChannelState state;
 
@@ -20,8 +22,8 @@ public class Channel extends BaseEntity {
                 .map(User::getUserName)
                 .collect(Collectors.joining(", "));
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String created = sdf.format(new Date(createdAt));
-        String updated = sdf.format(new Date(updatedAt));
+        String created = sdf.format(new Date(getCreatedAt()));
+        String updated = sdf.format(new Date(getUpdatedAt()));
 
         return "Channel{" +"\n"+
                 "channelName=" + channelName+"\n"+
@@ -34,12 +36,9 @@ public class Channel extends BaseEntity {
     public Channel(String channelName, User user) {
         channelId = UUID.randomUUID();
         this.channelName = channelName;
-        users = new ArrayList<>();
         users.add(user);
-        messages = new ArrayList<>();
-        user.getChannels().add(this);
         state = ChannelState.ACTIVATED;
-
+        user.getChannels().add(this);
     }
 
     //양방향 연결
@@ -99,14 +98,6 @@ public class Channel extends BaseEntity {
 
     public String getChannelName() {
         return channelName;
-    }
-
-    public Long getCreatedAt() {
-        return createdAt;
-    }
-
-    public Long getUpdatedAt() {
-        return updatedAt;
     }
 
     public List<User> getUsers() {

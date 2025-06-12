@@ -1,10 +1,12 @@
 package com.sprint.mission.discodeit.entity;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class Message extends BaseEntity {
+public class Message extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final UUID messageId;
     private User user;
     private Channel channel;
@@ -15,8 +17,8 @@ public class Message extends BaseEntity {
     @Override
     public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String created = sdf.format(new Date(createdAt));
-        String updated = sdf.format(new Date(updatedAt));
+        String created = sdf.format(new Date(getCreatedAt()));
+        String updated = sdf.format(new Date(getUpdatedAt()));
 
         return "Message{" +"\n"+
                 "messageContents=" + contents +"\n"+
