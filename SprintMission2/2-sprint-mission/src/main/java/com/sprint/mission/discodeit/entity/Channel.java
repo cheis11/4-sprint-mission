@@ -44,28 +44,33 @@ public class Channel extends BaseEntity implements Serializable {
     //양방향 연결
     public void addUser(User user) {
         if(!users.contains(user)) {
-            users.add(user);
-            user.addChannel(this);
+            throw new IllegalArgumentException("해당 유저는 채널에 존재하지 않습니다.");
         }
+        users.add(user);
+        user.addChannel(this);
     }
     public void removeUser(User user) {
-        if(users.contains(user)) {
-            users.remove(user);
-            user.removeChannel(this);
+        if(!users.contains(user)) {
+            throw new IllegalArgumentException("해당 유저는 채널에 존재하지 않습니다.");
         }
+        users.remove(user);
+        user.removeChannel(this);
+
     }
 
     public void addMessage(Message message) {
         if(!messages.contains(message)) {
-            messages.add(message);
-            message.addChannel(this);
+            throw new IllegalArgumentException("해당 메시지는 채널에 존재하지 않습니다.");
         }
+        messages.add(message);
+        message.addChannel(this);
     }
     public void removeMessage(Message message) {
-        if(messages.contains(message)) {
-            messages.remove(message);
-            message.removeChannel(this);
+        if(!messages.contains(message)) {
+            throw new IllegalArgumentException("해당 메시지는 채널에 존재하지 않습니다.");
         }
+        messages.remove(message);
+        message.removeChannel(this);
     }
 
     //상태

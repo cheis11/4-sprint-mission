@@ -38,32 +38,35 @@ public class Message extends BaseEntity implements Serializable {
         channel.getChannelMessages().add(this);
     }
 
-    //양방향 연결
+
     public void addChannel(Channel channel) {
-        if(this.channel == null) {
-            this.channel = channel;
-            channel.addMessage(this);
+        if(this.channel != null) {
+            throw new IllegalArgumentException("이미 채널에 작성된 메세지입니다.");
         }
+        this.channel = channel;
+        channel.addMessage(this);
     }
 
     public void removeChannel(Channel channel) {
-        if(this.channel == channel) {
-            this.channel = null;
-            channel.removeMessage(this);
+        if(this.channel != null) {
+            throw new IllegalArgumentException("이미 채널에 작성된 메세지입니다.");
         }
+        channel.removeMessage(this);
     }
 
     public void addUser(User user) {
-        if(this.user == null) {
-            this.user = user;
-            user.addMessage(this);
+        if (this.user != null) {
+            throw new IllegalStateException("이미 작성자가 지정된 메시지입니다.");
         }
+        this.user = user;
+        user.addMessage(this);
     }
+
     public void removeUser(User user) {
-        if(this.user != user) {
-            this.user = null;
-            user.removeMessage(this);
+        if (this.user != null) {
+            throw new IllegalStateException("이미 작성자가 지정된 메시지입니다.");
         }
+        user.removeMessage(this);
     }
 
     //상태

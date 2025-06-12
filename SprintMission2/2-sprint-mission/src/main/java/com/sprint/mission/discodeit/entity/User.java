@@ -48,28 +48,32 @@ public class User extends BaseEntity implements Serializable {
     //양방향 연결
     public void addChannel(Channel channel) {
         if(!channels.contains(channel)) {
-            channels.add(channel);
-            channel.addUser(this);
+            throw new IllegalArgumentException("해당 채널에 유저가 참가해있지 않습니다.");
         }
+        channels.add(channel);
+        channel.addUser(this);
     }
     public void removeChannel(Channel channel) {
-        if(channels.contains(channel)) {
-            channels.remove(channel);
-            channel.removeUser(this);
+        if(!channels.contains(channel)) {
+            throw new IllegalArgumentException("해당 채널에 유저가 참가해있지 않습니다.");
         }
+        channels.remove(channel);
+        channel.removeUser(this);
     }
 
     public void addMessage(Message message) {
         if(!messages.contains(message)) {
-            messages.add(message);
-            message.addUser(this);
+            throw new IllegalArgumentException("해당 메세지는 유저가 쓴 메세지에 존재하지 않습니다.");
         }
+        messages.add(message);
+        message.addUser(this);
     }
     public void removeMessage(Message message) {
-        if(messages.contains(message)) {
-            messages.remove(message);
-            message.removeUser(this);
+        if(!messages.contains(message)) {
+            throw new IllegalArgumentException("해당 메세지는 유저가 쓴 메세지에 존재하지 않습니다.");
         }
+        messages.remove(message);
+        message.removeUser(this);
     }
 
     //상태
