@@ -5,12 +5,9 @@ public enum UserState {
     OFFLINE("오프라인"),
     DELETED("탈퇴");
 
-    private String state;
+    private String description;
 
-    private UserState(String state) {
-        this.state = state;
-    }
-    public String getState() {
-        return state;
+    private UserState(String description) {
+        this.description = description;
     }
 }

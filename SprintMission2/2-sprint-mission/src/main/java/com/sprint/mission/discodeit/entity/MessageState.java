@@ -1,13 +1,13 @@
 package com.sprint.mission.discodeit.entity;
 
 public enum MessageState {
-    VISIBLE(""),
+    VISIBLE("표시"),
     INVISIBLE("숨김"),
     DELETED("삭제");
 
-    private String state;
+    private String description;
 
-    private MessageState(String state) {
-        this.state = state;
+    private MessageState(String description) {
+        this.description = description;
     }
 }

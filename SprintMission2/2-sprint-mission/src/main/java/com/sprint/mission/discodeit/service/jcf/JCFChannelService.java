@@ -29,7 +29,7 @@ public class JCFChannelService implements ChannelService {
                 .filter(channel -> channel.getState() != ChannelState.DELETED)
                 .collect(Collectors.toList());
     }
-//optional로 바꾸기
+
     @Override
     public Optional<Channel> findChannel(UUID channelId) {
         return data.stream()

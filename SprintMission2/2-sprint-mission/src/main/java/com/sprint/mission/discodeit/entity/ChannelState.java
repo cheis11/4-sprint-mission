@@ -5,9 +5,9 @@ public enum ChannelState {
     DEACTIVATED("비활성화"),
     DELETED("삭제");
 
-    private String state;
+    private String description;
 
-    private ChannelState(String state) {
-        this.state = state;
+    private ChannelState(String description) {
+        this.description = description;
     }
 }
