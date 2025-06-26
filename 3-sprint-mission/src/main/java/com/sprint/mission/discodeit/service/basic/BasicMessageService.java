@@ -31,10 +31,14 @@ public class BasicMessageService implements MessageService {
 
     @Override
     public MessageResponseDto createMessage(MessageCreateDto messageCreateDto) {
-        User user = userRepository.findById(messageCreateDto.userId())
-                .orElseThrow(() -> new RuntimeException("해당 유저가 존재하지 않습니다."));
-        Channel channel = channelRepository.findById(messageCreateDto.channelId())
-                .orElseThrow(() -> new RuntimeException("해당 채널이 존재하지 않습니다."));
+        User user =
+                userRepository
+                        .findById(messageCreateDto.userId())
+                        .orElseThrow(() -> new RuntimeException("해당 유저가 존재하지 않습니다."));
+        Channel channel =
+                channelRepository
+                        .findById(messageCreateDto.channelId())
+                        .orElseThrow(() -> new RuntimeException("해당 채널이 존재하지 않습니다."));
 
         Message message = messageMapper.messageCreateDtoToMessage(messageCreateDto);
 
@@ -69,8 +73,10 @@ public class BasicMessageService implements MessageService {
 
     @Override
     public MessageResponseDto findMessageById(UUID messageId) {
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 메세지가 존재하지 않습니다."));
+        Message message =
+                messageRepository
+                        .findById(messageId)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 메세지가 존재하지 않습니다."));
         return messageMapper.messageToMessageResponseDto(message);
     }
 
@@ -85,29 +91,32 @@ public class BasicMessageService implements MessageService {
     public MessageResponseDto updateMessage(MessageUpdateDto messageUpdateDto) {
         Message message = isExistMessage(messageUpdateDto.id());
 
-        Optional.ofNullable(messageUpdateDto.content())
-                        .ifPresent(message::setContents);
+        Optional.ofNullable(messageUpdateDto.content()).ifPresent(message::setContents);
 
         Optional.ofNullable(messageUpdateDto.removeAttachments())
                 .filter(attachments -> !attachments.isEmpty())
-                .ifPresent(removeList -> {
-                    removeList.forEach(attachmentId -> {
-                        binaryContentRepository.delete(attachmentId);
-                        message.getAttachmentIds().remove(attachmentId);
-                    });
-                });
+                .ifPresent(
+                        removeList -> {
+                            removeList.forEach(
+                                    attachmentId -> {
+                                        binaryContentRepository.delete(attachmentId);
+                                        message.getAttachmentIds().remove(attachmentId);
+                                    });
+                        });
 
         Optional.ofNullable(messageUpdateDto.newAttachments())
                 .filter(attachments -> !attachments.isEmpty())
-                .ifPresent(addList -> {
-                    addList.forEach(binaryContentDto -> {
-                        BinaryContent binaryContent =
-                                binaryContentMapper.BinaryContentRequestDtoToBinaryContent(
-                                        binaryContentDto, messageUpdateDto.id());
-                        binaryContentRepository.save(binaryContent);
-                        message.getAttachmentIds().add(binaryContent.getId());
-                    });
-                });
+                .ifPresent(
+                        addList -> {
+                            addList.forEach(
+                                    binaryContentDto -> {
+                                        BinaryContent binaryContent =
+                                                binaryContentMapper.BinaryContentRequestDtoToBinaryContent(
+                                                        binaryContentDto, messageUpdateDto.id());
+                                        binaryContentRepository.save(binaryContent);
+                                        message.getAttachmentIds().add(binaryContent.getId());
+                                    });
+                        });
 
         messageRepository.save(message);
         return messageMapper.messageToMessageResponseDto(message);

@@ -9,9 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class JCFUserRepository implements UserRepository {
     private final Map<UUID, User> data = new ConcurrentHashMap<>();
 

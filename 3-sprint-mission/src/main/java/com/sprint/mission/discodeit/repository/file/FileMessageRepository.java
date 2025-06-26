@@ -8,15 +8,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 
 @Primary
-@Repository
 public class FileMessageRepository implements MessageRepository {
     private static final String DATA_FILE = "data/message.ser";
     private final Map<UUID, Message> messageCache = new ConcurrentHashMap<>();
+    private final String fileDirectory;
 
-    public FileMessageRepository() {
+    public FileMessageRepository(String fileDirectory) {
+        this.fileDirectory = fileDirectory;
         loadAllMessagesToCache();
     }
 

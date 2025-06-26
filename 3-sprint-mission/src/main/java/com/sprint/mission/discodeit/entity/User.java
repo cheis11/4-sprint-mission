@@ -36,9 +36,8 @@ public class User extends BaseEntity implements Serializable {
 
     @Override
     public String toString() {
-        String channelIdString = channelIds.stream()
-                .map(UUID::toString)
-                .collect(Collectors.joining(", "));
+        String channelIdString =
+                channelIds.stream().map(UUID::toString).collect(Collectors.joining(", "));
 
         return "User{"
                 + "\n"

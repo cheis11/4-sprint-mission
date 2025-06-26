@@ -3,9 +3,7 @@ package com.sprint.mission.discodeit.service.basic;
 import com.sprint.mission.discodeit.dto.readstatus.ReadStatusCreateDto;
 import com.sprint.mission.discodeit.dto.readstatus.ReadStatusResponseDto;
 import com.sprint.mission.discodeit.dto.readstatus.ReadStatusUpdateDto;
-import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ReadStatus;
-import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.mapper.ReadStatusMapper;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.ReadStatusRepository;
@@ -40,9 +38,10 @@ public class BasicReadStatusService implements ReadStatusService {
 
         boolean exists =
                 readStatusRepository.findAll().stream()
-                        .anyMatch(rs ->
+                        .anyMatch(
+                                rs ->
                                         rs.getUserId().equals(readStatusCreateDto.userId())
-                                        && rs.getChannelId().equals(readStatusCreateDto.channelId()));
+                                                && rs.getChannelId().equals(readStatusCreateDto.channelId()));
         if (exists) {
             throw new IllegalArgumentException("이미 해당 채널에 읽음 상태가 존재합니다.");
         }
@@ -54,8 +53,10 @@ public class BasicReadStatusService implements ReadStatusService {
 
     @Override
     public ReadStatusResponseDto findReadStatus(UUID readStatusId) {
-        ReadStatus readStatus = readStatusRepository.findById(readStatusId)
-                .orElseThrow(() -> new IllegalArgumentException("readStatus가 존재하지 않습니다."));
+        ReadStatus readStatus =
+                readStatusRepository
+                        .findById(readStatusId)
+                        .orElseThrow(() -> new IllegalArgumentException("readStatus가 존재하지 않습니다."));
         return readStatusMapper.toReadStatusResponse(readStatus);
     }
 
@@ -80,13 +81,14 @@ public class BasicReadStatusService implements ReadStatusService {
 
     @Override
     public void deleteReadStatus(UUID readStatusId) {
-        readStatusRepository.findById(readStatusId).ifPresentOrElse(
-                binaryContent -> {
-                    readStatusRepository.delete(readStatusId);
-                },
-                () -> {
-                    throw new IllegalArgumentException("삭제할 binaryContent가 없습니다.");
-                }
-        );
+        readStatusRepository
+                .findById(readStatusId)
+                .ifPresentOrElse(
+                        binaryContent -> {
+                            readStatusRepository.delete(readStatusId);
+                        },
+                        () -> {
+                            throw new IllegalArgumentException("삭제할 binaryContent가 없습니다.");
+                        });
     }
 }

@@ -3,7 +3,6 @@ package com.sprint.mission.discodeit.service;
 import com.sprint.mission.discodeit.dto.message.MessageCreateDto;
 import com.sprint.mission.discodeit.dto.message.MessageResponseDto;
 import com.sprint.mission.discodeit.dto.message.MessageUpdateDto;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -20,5 +19,4 @@ public interface MessageService {
     public MessageResponseDto updateMessage(MessageUpdateDto messageUpdateDto); // 메세지 수정
 
     public void deleteMessage(UUID messageId); // 메세지 삭제
-
 }

@@ -26,7 +26,6 @@ public class ChannelMapper {
                 channel.getDescription(),
                 channel.getType(),
                 lastMessageTime,
-                userIds
-        );
+                userIds);
     }
 }

@@ -6,15 +6,15 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 
 @Primary
-@Repository
 public class FileBinaryContentRepository implements BinaryContentRepository {
     private static final String DATA_FILE = "data/binaryContent.ser";
     private final Map<UUID, BinaryContent> binaryContentCache = new ConcurrentHashMap<>();
+    private final String fileDirectory;
 
-    public FileBinaryContentRepository() {
+    public FileBinaryContentRepository(String fileDirectory) {
+        this.fileDirectory = fileDirectory;
         loadAllUserStatusToCache();
     }
 

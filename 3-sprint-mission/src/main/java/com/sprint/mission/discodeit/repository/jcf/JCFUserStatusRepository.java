@@ -4,9 +4,7 @@ import com.sprint.mission.discodeit.entity.UserStatus;
 import com.sprint.mission.discodeit.repository.UserStatusRepository;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class JCFUserStatusRepository implements UserStatusRepository {
     private final Map<UUID, UserStatus> data = new ConcurrentHashMap<>();
 

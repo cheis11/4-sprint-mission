@@ -5,7 +5,6 @@ import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentRequestDto;
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentResponseDto;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

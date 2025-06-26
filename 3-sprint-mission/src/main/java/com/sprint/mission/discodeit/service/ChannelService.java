@@ -5,7 +5,6 @@ import com.sprint.mission.discodeit.dto.channel.ChannelResponseDto;
 import com.sprint.mission.discodeit.dto.channel.ChannelUpdateDto;
 import com.sprint.mission.discodeit.dto.message.MessageResponseDto;
 import com.sprint.mission.discodeit.dto.user.UserResponseDto;
-import com.sprint.mission.discodeit.entity.User;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,8 +23,7 @@ public interface ChannelService {
     public List<MessageResponseDto> findMessagesByUserInChannel(
             UUID channelId, UUID userId); // 채널에서 특정 유저가 쓴 메세지 확인
 
-    public ChannelResponseDto updateChannelName(
-            ChannelUpdateDto channelUpdateDto); // 채널 이름 업데이트
+    public ChannelResponseDto updateChannelName(ChannelUpdateDto channelUpdateDto); // 채널 이름 업데이트
 
     public void joinUser(UUID channelId, UUID userId); // 채널에 유저 초대
 

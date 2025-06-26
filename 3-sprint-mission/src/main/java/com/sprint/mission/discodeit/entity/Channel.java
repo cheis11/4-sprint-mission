@@ -80,9 +80,7 @@ public class Channel extends BaseEntity implements Serializable {
 
     @Override
     public String toString() {
-        String userIdString = userIds.stream()
-                .map(UUID::toString)
-                .collect(Collectors.joining(", "));
+        String userIdString = userIds.stream().map(UUID::toString).collect(Collectors.joining(", "));
 
         return "Channel{"
                 + "\n"

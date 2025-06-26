@@ -2,20 +2,19 @@ package com.sprint.mission.discodeit.repository.file;
 
 import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.repository.ReadStatusRepository;
-import com.sprint.mission.discodeit.service.UserService;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 
 @Primary
-@Repository
 public class FileReadStatusRepository implements ReadStatusRepository {
     private static final String DATA_FILE = "data/readStatus.ser";
     private final Map<UUID, ReadStatus> readStatusCache = new ConcurrentHashMap<>();
+    private final String fileDirectory;
 
-    public FileReadStatusRepository(UserService userService) {
+    public FileReadStatusRepository(String fileDirectory) {
+        this.fileDirectory = fileDirectory;
         loadAllReadStatusFromCache();
     }
 

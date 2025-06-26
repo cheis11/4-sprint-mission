@@ -8,15 +8,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 
 @Primary
-@Repository
 public class FileUserRepository implements UserRepository {
     private static final String DATA_FILE = "data/user.ser";
     private final Map<UUID, User> userCache = new ConcurrentHashMap<>();
+    private final String fileDirectory;
 
-    public FileUserRepository() {
+    public FileUserRepository(String fileDirectory) {
+        this.fileDirectory = fileDirectory;
         loadAllUsersToCache();
     }
 

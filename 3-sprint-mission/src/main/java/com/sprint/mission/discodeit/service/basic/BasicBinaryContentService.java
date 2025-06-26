@@ -19,16 +19,20 @@ public class BasicBinaryContentService implements BinaryContentService {
     private final BinaryContentMapper binaryContentMapper;
 
     @Override
-    public BinaryContentResponseDto createBinaryContent(BinaryContentCreateDto binaryContentCreateDto) {
-        BinaryContent binaryContent = binaryContentRepository.save(
-                binaryContentMapper.BinaryContentCreateDtoToBinaryContent(binaryContentCreateDto));
+    public BinaryContentResponseDto createBinaryContent(
+            BinaryContentCreateDto binaryContentCreateDto) {
+        BinaryContent binaryContent =
+                binaryContentRepository.save(
+                        binaryContentMapper.BinaryContentCreateDtoToBinaryContent(binaryContentCreateDto));
         return binaryContentMapper.BinaryContentToBinaryContentResponseDto(binaryContent);
     }
 
     @Override
     public BinaryContentResponseDto findBinaryContentById(UUID id) {
-        BinaryContent binaryContent = binaryContentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("BinaryContent를 찾을 수 없습니다."));
+        BinaryContent binaryContent =
+                binaryContentRepository
+                        .findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("BinaryContent를 찾을 수 없습니다."));
 
         return binaryContentMapper.BinaryContentToBinaryContentResponseDto(binaryContent);
     }
@@ -43,13 +47,14 @@ public class BasicBinaryContentService implements BinaryContentService {
 
     @Override
     public void deleteBinaryContent(UUID id) {
-        binaryContentRepository.findById(id).ifPresentOrElse(
-                binaryContent -> {
-                    binaryContentRepository.delete(id);
-                },
-            () -> {
-                    throw new IllegalArgumentException("삭제할 binaryContent가 없습니다.");
-            }
-        );
+        binaryContentRepository
+                .findById(id)
+                .ifPresentOrElse(
+                        binaryContent -> {
+                            binaryContentRepository.delete(id);
+                        },
+                        () -> {
+                            throw new IllegalArgumentException("삭제할 binaryContent가 없습니다.");
+                        });
     }
 }

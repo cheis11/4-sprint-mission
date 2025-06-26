@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit;
 
+import com.sprint.mission.discodeit.config.DiscodeitProperties;
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentCreateDto;
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentRequestDto;
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentResponseDto;
@@ -16,22 +17,20 @@ import com.sprint.mission.discodeit.dto.readstatus.ReadStatusUpdateDto;
 import com.sprint.mission.discodeit.dto.user.UserCreateDto;
 import com.sprint.mission.discodeit.dto.user.UserResponseDto;
 import com.sprint.mission.discodeit.dto.user.UserUpdateDto;
-import com.sprint.mission.discodeit.dto.userstatus.UserStatusCreateDto;
 import com.sprint.mission.discodeit.dto.userstatus.UserStatusResponseDto;
-import com.sprint.mission.discodeit.dto.userstatus.UserStatusUpdateDto;
 import com.sprint.mission.discodeit.entity.*;
 import com.sprint.mission.discodeit.service.*;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
+@EnableConfigurationProperties(DiscodeitProperties.class)
 public class DiscodeitApplication {
 
     // 테스트를 반복하면 데이터가 중복되는 현상때문에 파일을 다 지움
@@ -65,12 +64,12 @@ public class DiscodeitApplication {
         }
     }
 
-
     public static void main(String[] args) {
         clearDataFiles();
-        ConfigurableApplicationContext context = SpringApplication.run(DiscodeitApplication.class, args);
+        ConfigurableApplicationContext context =
+                SpringApplication.run(DiscodeitApplication.class, args);
 
-        //Service 주입
+        // Service 주입
         UserService userService = context.getBean(UserService.class);
         ChannelService channelService = context.getBean(ChannelService.class);
         MessageService messageService = context.getBean(MessageService.class);
@@ -79,89 +78,80 @@ public class DiscodeitApplication {
         BinaryContentService binaryContentService = context.getBean(BinaryContentService.class);
         ReadStatusService readStatusService = context.getBean(ReadStatusService.class);
 
-        //유저 생성
-        UserResponseDto user1 = userService.createUser(
-                new UserCreateDto("Alice", "alice@google.com", "1234", null, true)
-        );
-        UserResponseDto user2 = userService.createUser(
-                new UserCreateDto("Bob", "bob@google.com", "5678", null, true)
-        );
-        UserResponseDto user3 = userService.createUser(
-                new UserCreateDto("Charlie", "charlie@google.com", "9012", null, true)
-        );
+        // 유저 생성
+        UserResponseDto user1 =
+                userService.createUser(new UserCreateDto("Alice", "alice@google.com", "1234", null, true));
+        UserResponseDto user2 =
+                userService.createUser(new UserCreateDto("Bob", "bob@google.com", "5678", null, true));
+        UserResponseDto user3 =
+                userService.createUser(
+                        new UserCreateDto("Charlie", "charlie@google.com", "9012", null, true));
 
-        //유저 로그인 → 접속 시간 갱신
+        // 유저 로그인 → 접속 시간 갱신
         authService.login(new LoginRequestDto("Alice", "1234"));
 
         UserStatusResponseDto userStatusResponseDto =
                 userStatusService.updateUserStatusByUserId(user1.id());
 
-        //채널 생성 및 이름 변경
-        ChannelResponseDto channel1 = channelService.createPublicChannel(
-                new ChannelCreateDto("General", "채팅방", ChannelType.PUBLIC, user1.id())
-        );
+        // 채널 생성 및 이름 변경
+        ChannelResponseDto channel1 =
+                channelService.createPublicChannel(
+                        new ChannelCreateDto("General", "채팅방", ChannelType.PUBLIC, user1.id()));
         List<UserResponseDto> users = new ArrayList<>();
         users.add(user2);
         ChannelResponseDto channel2 = channelService.createPrivateChannel(users);
-        ChannelResponseDto channel3 = channelService.createPublicChannel(
-                new ChannelCreateDto("Example", "삭제 될 채팅방", ChannelType.PUBLIC, user3.id())
-        );
+        ChannelResponseDto channel3 =
+                channelService.createPublicChannel(
+                        new ChannelCreateDto("Example", "삭제 될 채팅방", ChannelType.PUBLIC, user3.id()));
         channelService.updateChannelName(new ChannelUpdateDto(channel1.id(), "DailyTalk"));
 
-        //채널 삭제
+        // 채널 삭제
         channelService.deleteChannel(channel3.id());
 
-        //채널 참가
+        // 채널 참가
         channelService.joinUser(channel1.id(), user3.id());
         channelService.joinUser(channel2.id(), user3.id());
         channelService.leaveUser(channel2.id(), user3.id());
 
-        //첨부파일 생성
-        BinaryContentResponseDto binaryContent1 = binaryContentService.createBinaryContent(
-                new BinaryContentCreateDto(user1.id(), null, null, null)
-        );
+        // 첨부파일 생성
+        BinaryContentResponseDto binaryContent1 =
+                binaryContentService.createBinaryContent(
+                        new BinaryContentCreateDto(user1.id(), null, null, null));
         binaryContentService.deleteBinaryContent(binaryContent1.id());
-        BinaryContentResponseDto binaryContent = binaryContentService.createBinaryContent(
-                new BinaryContentCreateDto(user1.id(), null, null, null)
-        );
+        BinaryContentResponseDto binaryContent =
+                binaryContentService.createBinaryContent(
+                        new BinaryContentCreateDto(user1.id(), null, null, null));
 
-        //메시지 생성
-        MessageResponseDto message = messageService.createMessage(
-                new MessageCreateDto(
-                        "처음 메시지입니다",
-                        List.of(new BinaryContentRequestDto(null, null)),
-                        user1.id(),
-                        channel1.id()
-                )
-        );
+        // 메시지 생성
+        MessageResponseDto message =
+                messageService.createMessage(
+                        new MessageCreateDto(
+                                "처음 메시지입니다",
+                                List.of(new BinaryContentRequestDto(null, null)),
+                                user1.id(),
+                                channel1.id()));
 
-        //메시지 수정
+        // 메시지 수정
         messageService.updateMessage(
                 new MessageUpdateDto(
                         message.id(),
                         "수정된 메시지",
                         List.of(), // 삭제할 첨부 없음
-                        List.of(new BinaryContentRequestDto(null, null))
-                )
-        );
+                        List.of(new BinaryContentRequestDto(null, null))));
 
-        //읽음 상태 생성 및 갱신
-        ReadStatusResponseDto readStatus1 = readStatusService.createReadStatus(
-                new ReadStatusCreateDto(user1.id(), channel1.id())
-        );
+        // 읽음 상태 생성 및 갱신
+        ReadStatusResponseDto readStatus1 =
+                readStatusService.createReadStatus(new ReadStatusCreateDto(user1.id(), channel1.id()));
         readStatusService.deleteReadStatus(readStatus1.id());
 
-        ReadStatusResponseDto readStatus = readStatusService.createReadStatus(
-                new ReadStatusCreateDto(user1.id(), channel1.id())
-        );
-        readStatusService.updateReadStatus(
-                new ReadStatusUpdateDto(readStatus.id(), true)
-        );
+        ReadStatusResponseDto readStatus =
+                readStatusService.createReadStatus(new ReadStatusCreateDto(user1.id(), channel1.id()));
+        readStatusService.updateReadStatus(new ReadStatusUpdateDto(readStatus.id(), true));
 
-        //유저 삭제
+        // 유저 삭제
         userService.deleteUser(user2.id());
 
-        //출력 확인
+        // 출력 확인
         System.out.println("\n==== 전체 사용자 ====");
         userService.findAllUser().forEach(System.out::println);
 
@@ -169,9 +159,8 @@ public class DiscodeitApplication {
         System.out.println(userService.findUserById(user1.id()));
 
         System.out.println("\n==== 유저 이름 수정 후 ====");
-        UserResponseDto updatedUser = userService.updateUser(
-                new UserUpdateDto(user1.id(), "AliceUpdated", null)
-        );
+        UserResponseDto updatedUser =
+                userService.updateUser(new UserUpdateDto(user1.id(), "AliceUpdated", null));
         System.out.println(updatedUser);
 
         System.out.println("\n==== 유저가 쓴 모든 메시지 ====");
@@ -190,7 +179,9 @@ public class DiscodeitApplication {
         channelService.findChannelsByNameContains("Daily").forEach(System.out::println);
 
         System.out.println("\n==== 채널에서 유저를 찾아 메세지를 출력 ====");
-        channelService.findMessagesByUserInChannel(channel1.id(), user1.id()).forEach(System.out::println);
+        channelService
+                .findMessagesByUserInChannel(channel1.id(), user1.id())
+                .forEach(System.out::println);
 
         System.out.println("\n==== 채널 메시지 ====");
         messageService.findAllByChannelId(channel1.id()).forEach(System.out::println);

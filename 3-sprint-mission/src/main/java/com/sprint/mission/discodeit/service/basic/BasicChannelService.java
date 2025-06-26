@@ -37,15 +37,17 @@ public class BasicChannelService implements ChannelService {
         Channel channel = channelMapper.channelCreateDtoToChannel(channelCreateDto);
 
         UUID creatorId = channelCreateDto.creatorId();
-        User creator = userRepository.findById(creatorId)
-                .orElseThrow(() -> new IllegalArgumentException("생성자 유저가 존재하지 않습니다."));
+        User creator =
+                userRepository
+                        .findById(creatorId)
+                        .orElseThrow(() -> new IllegalArgumentException("생성자 유저가 존재하지 않습니다."));
         channel.addUser(creator);
 
         channelRepository.save(channel);
 
         List<UUID> participantIds = channel.getUserIds();
 
-        return channelMapper.channelToChannelResponseDto(channel,null,participantIds);
+        return channelMapper.channelToChannelResponseDto(channel, null, participantIds);
     }
 
     @Override
@@ -53,8 +55,10 @@ public class BasicChannelService implements ChannelService {
         Channel channel = new Channel(null, null, ChannelType.PRIVATE);
 
         for (UserResponseDto userDto : users) {
-            User user = userRepository.findById(userDto.id())
-                    .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+            User user =
+                    userRepository
+                            .findById(userDto.id())
+                            .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
 
             channel.addUser(user);
 
@@ -69,28 +73,32 @@ public class BasicChannelService implements ChannelService {
     }
 
     private boolean isAccessibleChannel(Channel channel, UUID userId) {
-        return channel.getType() == ChannelType.PUBLIC ||
-                channel.getUserIds().contains(userId);
+        return channel.getType() == ChannelType.PUBLIC || channel.getUserIds().contains(userId);
     }
 
     @Override
     public List<ChannelResponseDto> findAllByUserId(UUID userId) {
         return channelRepository.findAll().stream()
-                .filter(channel -> channel.getType() == ChannelType.PUBLIC ||
-                        channel.getUserIds().contains(userId)) // 수정된 조건
-                .map(channel -> {
-                    Instant lastMessageTime = getLastMessageTime(channel);
-                    List<UUID> participantIds = getParticipantIds(channel);
-                    return channelMapper.channelToChannelResponseDto(
-                            channel, lastMessageTime, participantIds);
-                })
+                .filter(
+                        channel ->
+                                channel.getType() == ChannelType.PUBLIC
+                                        || channel.getUserIds().contains(userId)) // 수정된 조건
+                .map(
+                        channel -> {
+                            Instant lastMessageTime = getLastMessageTime(channel);
+                            List<UUID> participantIds = getParticipantIds(channel);
+                            return channelMapper.channelToChannelResponseDto(
+                                    channel, lastMessageTime, participantIds);
+                        })
                 .collect(Collectors.toList());
     }
 
     @Override
     public ChannelResponseDto findChannelById(UUID channelId) {
-        Channel channel = channelRepository.findById(channelId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 채널이 존재하지 않습니다."));
+        Channel channel =
+                channelRepository
+                        .findById(channelId)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 채널이 존재하지 않습니다."));
 
         Instant lastMessageTime = getLastMessageTime(channel);
         List<UUID> participantIds = getParticipantIds(channel);
@@ -130,13 +138,11 @@ public class BasicChannelService implements ChannelService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public ChannelResponseDto updateChannelName(ChannelUpdateDto channelUpdateDto) {
         Channel channel = isExistChannel(channelUpdateDto.id());
 
-        Optional.ofNullable(channelUpdateDto.name())
-                        .ifPresent(channel::setChannelName);
+        Optional.ofNullable(channelUpdateDto.name()).ifPresent(channel::setChannelName);
 
         channelRepository.save(channel);
 
@@ -164,17 +170,21 @@ public class BasicChannelService implements ChannelService {
 
     @Override
     public void deleteChannel(UUID id) {
-        Channel channel = channelRepository
-                .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 채널이 존재하지 않습니다."));
+        Channel channel =
+                channelRepository
+                        .findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 채널이 존재하지 않습니다."));
 
         for (UUID messageId : channel.getMessageIds()) {
-            messageRepository.findById(messageId).ifPresent(message -> {
-                for (UUID attachmentId : message.getAttachmentIds()) {
-                    binaryContentRepository.delete(attachmentId);
-                }
-                messageRepository.delete(message.getId());
-            });
+            messageRepository
+                    .findById(messageId)
+                    .ifPresent(
+                            message -> {
+                                for (UUID attachmentId : message.getAttachmentIds()) {
+                                    binaryContentRepository.delete(attachmentId);
+                                }
+                                messageRepository.delete(message.getId());
+                            });
         }
 
         readStatusRepository.delete(id);

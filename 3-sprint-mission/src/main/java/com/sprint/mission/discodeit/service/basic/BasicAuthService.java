@@ -23,26 +23,31 @@ public class BasicAuthService implements AuthService {
 
     @Override
     public UserResponseDto login(LoginRequestDto loginRequestDto) {
-        User loginUser = userRepository.findAll().stream()
-                .filter(user ->
-                        user.getUserName().equals(loginRequestDto.userName()) &&
-                                user.getUserPassword().equals(loginRequestDto.password()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("사용자 이름 또는 비밀번호가 일치하지 않습니다."));
+        User loginUser =
+                userRepository.findAll().stream()
+                        .filter(
+                                user ->
+                                        user.getUserName().equals(loginRequestDto.userName())
+                                                && user.getUserPassword().equals(loginRequestDto.password()))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("사용자 이름 또는 비밀번호가 일치하지 않습니다."));
 
-        userStatusRepository.findById(loginUser.getId())
-                .ifPresent(userStatus -> {
-                    userStatus.updateAccessTime();
-                    userStatusRepository.save(userStatus); // 변경 사항 저장
-                });
+        userStatusRepository
+                .findById(loginUser.getId())
+                .ifPresent(
+                        userStatus -> {
+                            userStatus.updateAccessTime();
+                            userStatusRepository.save(userStatus); // 변경 사항 저장
+                        });
 
-        byte[] image = binaryContentRepository.findById(loginUser.getId())
-                .map(BinaryContent::getData)
-                .orElse(null);
+        byte[] image =
+                binaryContentRepository
+                        .findById(loginUser.getId())
+                        .map(BinaryContent::getData)
+                        .orElse(null);
 
-        boolean status = userStatusRepository.findById(loginUser.getId())
-                .map(UserStatus::isOnline)
-                .orElse(false);
+        boolean status =
+                userStatusRepository.findById(loginUser.getId()).map(UserStatus::isOnline).orElse(false);
 
         return userMapper.userToUserResponseDto(loginUser, status, image);
     }

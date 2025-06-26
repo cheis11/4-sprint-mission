@@ -25,7 +25,7 @@ public class BasicUserService implements UserService {
     private final UserStatusRepository userStatusRepository;
     private final UserMapper userMapper;
     private final BinaryContentMapper binaryContentMapper;
-    private final MessageMapper  messageMapper;
+    private final MessageMapper messageMapper;
     private final MessageRepository messageRepository;
     private final ChannelRepository channelRepository;
 
@@ -38,7 +38,8 @@ public class BasicUserService implements UserService {
 
         if (userDto.binaryContentDto() != null) {
             BinaryContent binaryContent =
-                    binaryContentMapper.BinaryContentRequestDtoToBinaryContent(userDto.binaryContentDto(), user.getId());
+                    binaryContentMapper.BinaryContentRequestDtoToBinaryContent(
+                            userDto.binaryContentDto(), user.getId());
             binaryContentRepository.save(binaryContent);
         }
 
@@ -48,7 +49,7 @@ public class BasicUserService implements UserService {
         }
         userStatusRepository.save(userStatus);
 
-        return userMapper.userToUserResponseDto(user, true,null);
+        return userMapper.userToUserResponseDto(user, true, null);
     }
 
     @Override
@@ -74,16 +75,16 @@ public class BasicUserService implements UserService {
 
     @Override
     public UserResponseDto findUserById(UUID userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("user가 존재하지 않습니다."));
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new IllegalArgumentException("user가 존재하지 않습니다."));
 
-        boolean status = userStatusRepository.findById(user.getId())
-                .map(UserStatus::isOnline)
-                .orElse(false);
+        boolean status =
+                userStatusRepository.findById(user.getId()).map(UserStatus::isOnline).orElse(false);
 
-        byte[] image = binaryContentRepository.findById(user.getId())
-                .map(BinaryContent::getData)
-                .orElse(null);
+        byte[] image =
+                binaryContentRepository.findById(user.getId()).map(BinaryContent::getData).orElse(null);
 
         return userMapper.userToUserResponseDto(user, status, image);
     }
@@ -114,19 +115,20 @@ public class BasicUserService implements UserService {
     public UserResponseDto updateUser(UserUpdateDto userUpdateDto) {
         User findUser = isExistUser(userUpdateDto.id());
 
-        Optional.ofNullable(userUpdateDto.name())
-                        .ifPresent(findUser::setUserName);
+        Optional.ofNullable(userUpdateDto.name()).ifPresent(findUser::setUserName);
 
         byte[] updatedImage = null;
         Optional.ofNullable(userUpdateDto.image())
-                .ifPresent(image -> {
-                    BinaryContent profile = binaryContentRepository
-                            .findById(userUpdateDto.id())
-                            .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 프로필 이미지가 존재하지 않습니다."));
-                    profile.setData(image);
-                    binaryContentRepository.save(profile);
-                }
-        );
+                .ifPresent(
+                        image -> {
+                            BinaryContent profile =
+                                    binaryContentRepository
+                                            .findById(userUpdateDto.id())
+                                            .orElseThrow(
+                                                    () -> new IllegalArgumentException("해당 사용자의 프로필 이미지가 존재하지 않습니다."));
+                            profile.setData(image);
+                            binaryContentRepository.save(profile);
+                        });
 
         User user = userRepository.save(findUser);
         boolean status =
@@ -137,23 +139,28 @@ public class BasicUserService implements UserService {
 
     @Override
     public void deleteUser(UUID userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("삭제할 user가 없습니다."));
-        for(Channel channel : channelRepository.findAll()) {
-            if(channel.getUserIds().contains(userId)) {
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new IllegalArgumentException("삭제할 user가 없습니다."));
+        for (Channel channel : channelRepository.findAll()) {
+            if (channel.getUserIds().contains(userId)) {
                 channel.getUserIds().remove(userId);
-                if(channel.getUserIds().isEmpty() && channel.getType() == ChannelType.PRIVATE){
+                if (channel.getUserIds().isEmpty() && channel.getType() == ChannelType.PRIVATE) {
                     channelRepository.delete(channel.getId());
-                }else{
+                } else {
                     channelRepository.save(channel);
                 }
             }
         }
 
-        List<UUID> binaryToDelete = binaryContentRepository.findAll().stream()
-                .filter(binaryContent -> binaryContent.getUserId() != null && binaryContent.getUserId().equals(userId))
-                .map(BinaryContent::getId)
-                .toList();
+        List<UUID> binaryToDelete =
+                binaryContentRepository.findAll().stream()
+                        .filter(
+                                binaryContent ->
+                                        binaryContent.getUserId() != null && binaryContent.getUserId().equals(userId))
+                        .map(BinaryContent::getId)
+                        .toList();
         binaryToDelete.forEach(binaryContentRepository::delete);
 
         userStatusRepository.findAll().stream()
