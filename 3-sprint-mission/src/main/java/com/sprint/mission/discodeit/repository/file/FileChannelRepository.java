@@ -7,9 +7,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import org.springframework.context.annotation.Primary;
 
-@Primary
 public class FileChannelRepository implements ChannelRepository {
     private static final String DATA_FILE = "data/channel.ser";
     private final Map<UUID, Channel> channelCache = new ConcurrentHashMap<>();

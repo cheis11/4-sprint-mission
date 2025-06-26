@@ -5,9 +5,7 @@ import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.context.annotation.Primary;
 
-@Primary
 public class FileBinaryContentRepository implements BinaryContentRepository {
     private static final String DATA_FILE = "data/binaryContent.ser";
     private final Map<UUID, BinaryContent> binaryContentCache = new ConcurrentHashMap<>();

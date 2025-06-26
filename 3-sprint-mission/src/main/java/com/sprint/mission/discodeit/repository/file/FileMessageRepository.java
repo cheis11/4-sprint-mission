@@ -7,9 +7,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import org.springframework.context.annotation.Primary;
 
-@Primary
 public class FileMessageRepository implements MessageRepository {
     private static final String DATA_FILE = "data/message.ser";
     private final Map<UUID, Message> messageCache = new ConcurrentHashMap<>();

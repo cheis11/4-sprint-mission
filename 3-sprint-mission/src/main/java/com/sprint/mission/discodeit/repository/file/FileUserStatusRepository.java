@@ -5,9 +5,7 @@ import com.sprint.mission.discodeit.repository.UserStatusRepository;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.context.annotation.Primary;
 
-@Primary
 public class FileUserStatusRepository implements UserStatusRepository {
     private static final String DATA_FILE = "data/userStatus.ser";
     private final Map<UUID, UserStatus> userStatusCache = new ConcurrentHashMap<>();

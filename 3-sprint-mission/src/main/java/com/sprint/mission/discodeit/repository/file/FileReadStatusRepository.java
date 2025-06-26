@@ -5,9 +5,7 @@ import com.sprint.mission.discodeit.repository.ReadStatusRepository;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.context.annotation.Primary;
 
-@Primary
 public class FileReadStatusRepository implements ReadStatusRepository {
     private static final String DATA_FILE = "data/readStatus.ser";
     private final Map<UUID, ReadStatus> readStatusCache = new ConcurrentHashMap<>();

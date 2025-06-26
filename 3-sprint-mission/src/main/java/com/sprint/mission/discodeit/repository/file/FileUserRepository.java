@@ -7,9 +7,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import org.springframework.context.annotation.Primary;
 
-@Primary
 public class FileUserRepository implements UserRepository {
     private static final String DATA_FILE = "data/user.ser";
     private final Map<UUID, User> userCache = new ConcurrentHashMap<>();
