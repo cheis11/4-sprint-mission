@@ -26,7 +26,7 @@ async function fetchUserProfile(profileId) {
         if (!response.ok) throw new Error('프로필 이미지 요청 실패');
         const profile = await response.json();
 
-        return `data:${profile.contentType};base64,${profile.bytes}`;
+        return `data:${profile.contentType};base64,${profile.data}`;
     } catch (error) {
         console.error('🚨 프로필 이미지 오류:', error);
         return '/default-avatar.png';

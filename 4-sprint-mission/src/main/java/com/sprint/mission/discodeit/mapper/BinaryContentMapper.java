@@ -4,6 +4,8 @@ import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentCreateDto;
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentRequestDto;
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentResponseDto;
 import com.sprint.mission.discodeit.entity.BinaryContent;
+
+import java.util.Base64;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,11 +28,12 @@ public class BinaryContentMapper {
                 binaryContent.getId(),
                 binaryContent.getUserId(),
                 binaryContent.getMessageId(),
-                binaryContent.getData(),
+                Base64.getEncoder().encodeToString(binaryContent.getData()),
                 binaryContent.getDataType());
     }
 
     public BinaryContent BinaryContentResponseDtoToBinaryContent(BinaryContentResponseDto dto) {
-        return new BinaryContent(dto.userId(), dto.messageId(), dto.data(), dto.dataType());
+        byte[] decodedBytes = Base64.getDecoder().decode(dto.data());
+        return new BinaryContent(dto.userId(), dto.messageId(), decodedBytes, dto.dataType());
     }
 }

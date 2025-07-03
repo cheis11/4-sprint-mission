@@ -7,5 +7,3 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/
-  mvc:
-    static-path-pattern: /static/**
