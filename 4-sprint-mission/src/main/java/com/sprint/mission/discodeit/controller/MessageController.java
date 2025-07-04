@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/message")
+@RequestMapping(value = "/api/messages")
 public class MessageController {
     private final MessageService messageService;
     private final MessageMapper messageMapper;
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<MessageResponseDto> createMessage(@ModelAttribute MessageMultipartDto dto) {
         return ResponseEntity.ok(
                 messageService.createMessage(messageMapper.messageMultipartDtoToMessageCreateDto(dto)));
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<MessageResponseDto> updateMessage(
             @ModelAttribute MessageMultipartUpdateDto dto) {
         MessageUpdateDto messageUpdateDto =
@@ -30,13 +30,13 @@ public class MessageController {
         return ResponseEntity.ok(messageService.updateMessage(messageUpdateDto));
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteMessage(@RequestParam UUID id) {
         messageService.deleteMessage(id);
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<MessageResponseDto>> getMessages(@RequestParam UUID channelId) {
         List<MessageResponseDto> messageResponseDtos = messageService.findAllByChannelId(channelId);
         return ResponseEntity.ok(messageResponseDtos);

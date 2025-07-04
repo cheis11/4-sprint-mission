@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/binaryContent")
+@RequestMapping(value = "/api/binaryContents")
 public class BinaryContentController {
     private final BinaryContentService binaryContentService;
     private final BinaryContentMapper binaryContentMapper;
 
-    @RequestMapping(value = "/related", method = RequestMethod.GET)
+    @RequestMapping(value = "/multiple", method = RequestMethod.GET)
     public ResponseEntity<List<BinaryContentResponseDto>> getBinaryContents(@RequestParam UUID id) {
         if (id == null) {
             return ResponseEntity.badRequest().body(null);

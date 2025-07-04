@@ -13,38 +13,38 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/channel")
+@RequestMapping(value = "/api/channels")
 public class ChannelController {
     private final ChannelService channelService;
 
-    @RequestMapping(value = "/create/public", method = RequestMethod.POST)
+    @RequestMapping(value = "/public", method = RequestMethod.POST)
     public ResponseEntity<ChannelResponseDto> createPublicChannel(
             @RequestBody ChannelCreateDto channelCreateDto) {
         ChannelResponseDto channelResponseDto = channelService.createPublicChannel(channelCreateDto);
         return ResponseEntity.ok(channelResponseDto);
     }
 
-    @RequestMapping(value = "/create/private", method = RequestMethod.POST)
+    @RequestMapping(value = "/private", method = RequestMethod.POST)
     public ResponseEntity<ChannelResponseDto> createPrivateChannel(
             @RequestBody List<UserResponseDto> userResponseDtos) {
         ChannelResponseDto channelResponseDto = channelService.createPrivateChannel(userResponseDtos);
         return ResponseEntity.ok(channelResponseDto);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<ChannelResponseDto> updateChannel(
             @RequestBody ChannelUpdateDto channelUpdateDto) {
         ChannelResponseDto channelResponseDto = channelService.updateChannelName(channelUpdateDto);
         return ResponseEntity.ok(channelResponseDto);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteChannel(@RequestParam UUID channelId) {
         channelService.deleteChannel(channelId);
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<ChannelResponseDto>> getChannel(@RequestParam UUID userId) {
         List<ChannelResponseDto> channelResponseDtos = channelService.findAllByUserId(userId);
         return ResponseEntity.ok(channelResponseDtos);

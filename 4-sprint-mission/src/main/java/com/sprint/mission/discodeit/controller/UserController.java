@@ -14,25 +14,25 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/user")
+@RequestMapping(value = "/api/users")
 public class UserController {
     private final UserService userService;
     private final UserStatusService userStatusService;
     private final UserMapper userMapper;
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<UserResponseDto> createUser(@ModelAttribute UserMultipartDto dto) {
         return ResponseEntity.ok(
                 userService.createUser(userMapper.UserMultipartDtoToUserCreateDto(dto)));
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<UserResponseDto> updateUser(@ModelAttribute UserMultipartUpdateDto dto) {
         return ResponseEntity.ok(
                 userService.updateUser(userMapper.UserMultipartUpdateDtoToUserUpdateDto(dto)));
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteUser(@RequestParam UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/readStatus")
+@RequestMapping(value = "/api/readStatuses")
 public class ReadStatusController {
     private final ReadStatusService readStatusService;
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<ReadStatusResponseDto> createReadStatus(
             @RequestBody ReadStatusCreateDto readStatusCreateDto) {
         ReadStatusResponseDto readStatusResponseDto =
@@ -24,7 +24,7 @@ public class ReadStatusController {
         return ResponseEntity.ok(readStatusResponseDto);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<ReadStatusResponseDto> updateReadStatus(
             @RequestBody ReadStatusUpdateDto readStatusUpdateDto) {
         ReadStatusResponseDto readStatusResponseDto =
@@ -32,7 +32,7 @@ public class ReadStatusController {
         return ResponseEntity.ok(readStatusResponseDto);
     }
 
-    @RequestMapping(value = "/find", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<ReadStatusResponseDto>> getReadStatus(@RequestParam UUID channelId) {
         List<ReadStatusResponseDto> readStatusResponseDtos =
                 readStatusService.findAllReadStatusByChannelId(channelId);
