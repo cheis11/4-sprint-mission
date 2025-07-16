@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="309ef05d-6b41-4b95-b4fc-3f539cc77efe" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/.idea/google-java-format.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/data/channel.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/data/message.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/data/user.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/BaseEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/Channel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/ChannelState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/Message.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/MessageState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/UserState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/factory/ServiceFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/ChannelRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/MessageRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileChannelRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileMessageRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileUserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFChannelRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFMessageRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFUserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/run/JavaApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/ChannelService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/MessageService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicChannelService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicUserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileChannelService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileMessageService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileUserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFChannelService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFMessageService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFUserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/BaseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/BaseEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/Channel.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/Channel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/ChannelState.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/ChannelState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/Message.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/MessageState.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/MessageState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/UserState.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/entity/UserState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/factory/ServiceFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/factory/ServiceFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/ChannelRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/ChannelRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/MessageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/MessageRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileChannelRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileChannelRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileMessageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileMessageRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/file/FileUserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFChannelRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFChannelRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFMessageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFMessageRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/repository/jcf/JCFUserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/run/JavaApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/run/JavaApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/ChannelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/ChannelService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/MessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/MessageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicChannelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicChannelService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/basic/BasicUserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileChannelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileChannelService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileMessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileMessageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/file/FileUserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFChannelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFChannelService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFMessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFMessageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../SprintMission2/2-sprint-mission/src/main/java/com/sprint/mission/discodeit/service/jcf/JCFUserService.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="Record" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2yhrTn2Q1WI0NLeVN2sr2CjNdWq" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.3-sprint-mission [spotlessApply].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.3-sprint-mission 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.4-sprint-mission [spotlessApply].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.4-sprint-mission 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.5-sprint-mission 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.sprint_mission_3_base [spotlessApply].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.sprint_mission_3_base 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.소스 다운로드.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.DiscodeitApplication.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;sprint2&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/hochan/Desktop/codeit/Test/SprintMission5/예비/5-sprint-mission&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\hochan\Desktop\codeit\Test\SprintMission5\5-sprint-mission\src\main\resources\static" />
+      <recent name="C:\Users\hochan\Desktop\codeit\Test\SprintMission4\4-sprint-mission\src\main\resources\static" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="DiscodeitApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="discodeit.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sprint.mission.discodeit.DiscodeitApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="309ef05d-6b41-4b95-b4fc-3f539cc77efe" name="변경" comment="" />
+      <created>1750297656971</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1750297656971</updated>
+      <workItem from="1750297659176" duration="20000" />
+      <workItem from="1750297686384" duration="1000" />
+      <workItem from="1750297715991" duration="17000" />
+      <workItem from="1750298952365" duration="1849000" />
+      <workItem from="1750301423888" duration="22000" />
+      <workItem from="1750305391426" duration="8129000" />
+      <workItem from="1750313602019" duration="276000" />
+      <workItem from="1750313892270" duration="4017000" />
+      <workItem from="1750318161795" duration="16247000" />
+      <workItem from="1750378181256" duration="27617000" />
+      <workItem from="1750410322205" duration="5068000" />
+      <workItem from="1750477403151" duration="3243000" />
+      <workItem from="1750640917104" duration="34570000" />
+      <workItem from="1750725583196" duration="15952000" />
+      <workItem from="1750747314226" duration="11373000" />
+      <workItem from="1750813374903" duration="27534000" />
+      <workItem from="1750895728286" duration="2951000" />
+      <workItem from="1750899755003" duration="1603000" />
+      <workItem from="1750901415193" duration="2808000" />
+      <workItem from="1750904611655" duration="284000" />
+      <workItem from="1750911846298" duration="26000" />
+      <workItem from="1750912011136" duration="1944000" />
+      <workItem from="1750914658049" duration="134000" />
+      <workItem from="1750914807194" duration="5448000" />
+      <workItem from="1750921432451" duration="41000" />
+      <workItem from="1750921591685" duration="18000" />
+      <workItem from="1750921658130" duration="25000" />
+      <workItem from="1751245521778" duration="46000" />
+      <workItem from="1751331874034" duration="25927000" />
+      <workItem from="1751414510042" duration="16229000" />
+      <workItem from="1751433558724" duration="210000" />
+      <workItem from="1751434081673" duration="20306000" />
+      <workItem from="1751500915688" duration="2425000" />
+      <workItem from="1751505043909" duration="3643000" />
+      <workItem from="1751508717541" duration="4101000" />
+      <workItem from="1751517927548" duration="3226000" />
+      <workItem from="1751603793969" duration="15000" />
+      <workItem from="1751607850151" duration="230000" />
+      <workItem from="1751874070347" duration="1208000" />
+      <workItem from="1751940090726" duration="1632000" />
+      <workItem from="1751941758828" duration="5099000" />
+      <workItem from="1751949867649" duration="63000" />
+      <workItem from="1751949977671" duration="8464000" />
+      <workItem from="1751959569491" duration="28000" />
+      <workItem from="1751959656846" duration="10100000" />
+      <workItem from="1752024826611" duration="29000" />
+      <workItem from="1752033700085" duration="4798000" />
+      <workItem from="1752038602369" duration="11574000" />
+      <workItem from="1752051807332" duration="3547000" />
+      <workItem from="1752109307535" duration="1736000" />
+      <workItem from="1752111612279" duration="19000" />
+      <workItem from="1752112192188" duration="40000" />
+      <workItem from="1752112241306" duration="5340000" />
+      <workItem from="1752120855496" duration="159000" />
+      <workItem from="1752121046431" duration="8575000" />
+      <workItem from="1752129812142" duration="17614000" />
+      <workItem from="1752149608980" duration="380000" />
+      <workItem from="1752397367942" duration="753000" />
+      <workItem from="1752401769075" duration="10777000" />
+      <workItem from="1752421096163" duration="1354000" />
+      <workItem from="1752451082912" duration="7832000" />
+      <workItem from="1752461105867" duration="8787000" />
+      <workItem from="1752470867056" duration="34000" />
+      <workItem from="1752643897681" duration="43000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/mapper/MessageMapper.java</url>
+          <line>23</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/controller/MessageController.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="96" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/controller/MessageController.java</url>
+          <line>51</line>
+          <option name="timeStamp" value="97" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java</url>
+          <line>96</line>
+          <option name="timeStamp" value="98" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java</url>
+          <line>97</line>
+          <properties>
+            <option name="lambda-ordinal" value="0" />
+          </properties>
+          <option name="timeStamp" value="99" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java</url>
+          <line>98</line>
+          <properties>
+            <option name="lambda-ordinal" value="0" />
+          </properties>
+          <option name="timeStamp" value="100" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java</url>
+          <line>99</line>
+          <option name="timeStamp" value="101" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/service/basic/BasicMessageService.java</url>
+          <line>100</line>
+          <option name="timeStamp" value="102" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sprint/mission/discodeit/mapper/MessageMapper.java</url>
+          <line>31</line>
+          <option name="timeStamp" value="103" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="com.sprint.mission.discodeit.entity.MessageEntity" memberName="channelId" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="SpringBootApplicationConfigurationType">
+        <watch expression="encodedData" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/discodeit$DiscodeitApplication.ic" NAME="DiscodeitApplication 커버리지 결과" MODIFIED="1751344826243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>com.sprint.mission.discodeit.*</FILTER>
+    </SUITE>
+  </component>
+</project>
