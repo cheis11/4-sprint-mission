@@ -44,14 +44,11 @@ public class BasicUserService implements UserService {
         BinaryContent binaryContent = null;
         MultipartFile profileFile = request.profile();
         if (profileFile != null && !profileFile.isEmpty()) {
+            String fileName = profileFile.getOriginalFilename();
+            String contentType = profileFile.getContentType();
             BinaryContentDto profile =
                     basicBinaryContentService.createBinaryContent(
-                            new BinaryContentCreateServiceRequest(null, null, profileFile));
-            byte[] decodedBytes = null;
-            if (profile.bytes() != null && !profile.bytes().isEmpty()) {
-                decodedBytes = Base64.getDecoder().decode(profile.bytes());
-            }
-            binaryContentStorage.put(profile.id(), decodedBytes);
+                            new BinaryContentCreateServiceRequest(null, null, fileName, contentType, profileFile));
             binaryContent =
                     binaryContentMapper.binaryContentDtoToBinaryContent(profile);
         }
@@ -77,10 +74,11 @@ public class BasicUserService implements UserService {
             if (user.getProfile() != null) {
                 basicBinaryContentService.deleteBinaryContent(user.getProfile().getId());
             }
-
+            String fileName = profileFile.getOriginalFilename();
+            String contentType = profileFile.getContentType();
             BinaryContentDto updatedBinaryContentDto =
                     basicBinaryContentService.createBinaryContent(
-                            new BinaryContentCreateServiceRequest(user.getId(), null, profileFile));
+                            new BinaryContentCreateServiceRequest(user.getId(), null,fileName,contentType, profileFile));
             byte[] decodedBytes = null;
             if (updatedBinaryContentDto.bytes() != null && !updatedBinaryContentDto.bytes().isEmpty()) {
                 decodedBytes = Base64.getDecoder().decode(updatedBinaryContentDto.bytes());

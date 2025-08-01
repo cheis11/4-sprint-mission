@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentCreateService
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentDto;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.entity.MessageAttachment;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,9 +35,11 @@ public class BasicBinaryContentService implements BinaryContentService {
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
     private final BinaryContentStorage binaryContentStorage;
+  private static final Logger log = LoggerFactory.getLogger(BasicBinaryContentService.class);
 
   @Override
   public BinaryContentDto createBinaryContent(BinaryContentCreateServiceRequest request) {
+    log.info("[REQ] messageId: {}, userId: {}", request.messageId(), request.userId());
     try {
       MultipartFile file = request.file();
       if (file == null || file.isEmpty()) {
@@ -43,7 +48,9 @@ public class BasicBinaryContentService implements BinaryContentService {
 
       BinaryContent binaryContent = binaryContentMapper.binaryContentCreateServiceRequestToBinaryContent(request);
 
+      log.info("[PUT] 파일 저장 시도 - UUID: {}", binaryContent.getId());
       binaryContentStorage.put(binaryContent.getId(), file.getBytes());
+      log.info("[PUT] 파일 저장 완료 - UUID: {}", binaryContent.getId());
 
       BinaryContent saved = binaryContentRepository.save(binaryContent);
 
@@ -56,7 +63,7 @@ public class BasicBinaryContentService implements BinaryContentService {
 
       if (request.messageId() != null) {
         messageRepository.findById(request.messageId()).ifPresent(message -> {
-          message.setAttachment(saved);
+          message.addAttachment(saved);
           messageRepository.save(message);
         });
       }
@@ -68,8 +75,6 @@ public class BasicBinaryContentService implements BinaryContentService {
       throw new RuntimeException("파일 저장 실패", e);
     }
   }
-
-
 
   @Override
   public BinaryContentDto findBinaryContentById(UUID id) {
@@ -112,9 +117,10 @@ public class BasicBinaryContentService implements BinaryContentService {
 
   private List<BinaryContentDto> findAllBinaryContentByMessageId(UUID messageId) {
     return messageRepository.findById(messageId)
-        .map(Message::getAttachments)
+        .map(Message::getMessageAttachments)
         .orElse(List.of())
         .stream()
+        .map(MessageAttachment::getAttachment)
         .map(binaryContent -> {
           byte[] content = readBinaryContent(binaryContent.getId());
           String encoded = Base64.getEncoder().encodeToString(content);
@@ -122,6 +128,7 @@ public class BasicBinaryContentService implements BinaryContentService {
         })
         .collect(Collectors.toList());
   }
+
 
   private byte[] readBinaryContent(UUID id) {
     try (InputStream in = binaryContentStorage.get(id)) {

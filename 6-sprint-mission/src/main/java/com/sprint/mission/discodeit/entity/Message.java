@@ -4,14 +4,13 @@ import com.sprint.mission.discodeit.entity.base.BaseUpdatableEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,9 +33,8 @@ public class Message extends BaseUpdatableEntity {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "message_id")
-    private List<BinaryContent> attachments = new ArrayList<>();
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MessageAttachment> messageAttachments = new ArrayList<>();
 
     public Message(String messageContents, User user, Channel channel) {
         super();
@@ -45,8 +43,21 @@ public class Message extends BaseUpdatableEntity {
         this.author = user;
     }
 
-    public void setAttachment(BinaryContent attachment) {
-        this.attachments.add(attachment);
+    public void addAttachment(BinaryContent attachment) {
+        MessageAttachment messageAttachment = new MessageAttachment();
+        messageAttachment.setMessage(this);
+        messageAttachment.setAttachment(attachment);
+        this.messageAttachments.add(messageAttachment);
+    }
+
+    public void removeAttachment(BinaryContent attachment) {
+        messageAttachments.removeIf(ma -> ma.getAttachment().equals(attachment));
+    }
+
+    public List<BinaryContent> getAttachments() {
+        return messageAttachments.stream()
+            .map(MessageAttachment::getAttachment)
+            .collect(Collectors.toList());
     }
 
     @Override

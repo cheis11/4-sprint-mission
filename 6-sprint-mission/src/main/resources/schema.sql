@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS read_statuses
     id uuid not null primary key,
     created_at timestamp with time zone not null,
     updated_at timestamp with time zone,
-    user_id uuid unique references users on delete cascade,
+    user_id uuid references users on delete cascade,
     channel_id uuid references channels on delete cascade,
     last_read_at timestamp with time zone not null,
     unique (user_id, channel_id)
@@ -64,5 +64,6 @@ CREATE TABLE IF NOT EXISTS messages
 CREATE TABLE IF NOT EXISTS message_attachments
 (
     message_id uuid references messages on delete cascade,
-    attachment_id uuid references binary_contents on delete cascade
+    attachment_id uuid references binary_contents on delete cascade,
+    primary key (message_id, attachment_id)
 );

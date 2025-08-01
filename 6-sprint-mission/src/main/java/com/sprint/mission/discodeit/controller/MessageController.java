@@ -1,11 +1,13 @@
 package com.sprint.mission.discodeit.controller;
 
 import com.sprint.mission.discodeit.dto.message.*;
-import com.sprint.mission.discodeit.mapper.MessageMapper;
 import com.sprint.mission.discodeit.service.MessageService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class MessageController {
 
     private final MessageService messageService;
-    private final MessageMapper messageMapper;
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<MessageDto> createMessage(
@@ -48,8 +49,10 @@ public class MessageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MessageDto>> getMessagesByChannel(@RequestParam UUID channelId) {
-        List<MessageDto> messageDtos = messageService.findAllByChannelId(channelId);
-        return ResponseEntity.ok(messageDtos);
+    public Page<MessageDto> getMessagesByChannel(
+        @RequestParam UUID channelId,
+        Pageable pageable
+    ) {
+        return messageService.findAllByChannelId(channelId, pageable);
     }
 }

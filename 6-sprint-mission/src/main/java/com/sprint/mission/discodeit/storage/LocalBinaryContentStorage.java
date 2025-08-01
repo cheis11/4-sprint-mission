@@ -1,7 +1,8 @@
 package com.sprint.mission.discodeit.storage;
 
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentDto;
-import com.sprint.mission.discodeit.repository.BinaryContentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @ConditionalOnProperty(value = "discodeit.storage.type", havingValue = "local")
 public class LocalBinaryContentStorage implements BinaryContentStorage {
+  private static final Logger log = LoggerFactory.getLogger(LocalBinaryContentStorage.class);
 
   @Value("${discodeit.storage.local.root-path}")
   private Path root;
@@ -63,6 +65,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
 
   @Override
   public ResponseEntity<Resource> download(BinaryContentDto binaryContentDto) {
+    log.info("[DOWNLOAD] 다운로드 요청 수신 - UUID: {}", binaryContentDto.id());
     try(InputStream inputStream = get(binaryContentDto.id())){
       Resource resource = new InputStreamResource(inputStream);
       return ResponseEntity.ok()

@@ -2,8 +2,6 @@ package com.sprint.mission.discodeit.controller;
 
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentCreateServiceRequest;
 import com.sprint.mission.discodeit.dto.binarycontent.BinaryContentDto;
-import com.sprint.mission.discodeit.entity.BinaryContent;
-import com.sprint.mission.discodeit.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.service.BinaryContentService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class BinaryContentController {
 
     private final BinaryContentService binaryContentService;
-    private final BinaryContentMapper binaryContentMapper;
     private final BinaryContentStorage binaryContentStorage;
 
     @Operation(summary = "새로운 BinaryContent 생성", description = "파일을 첨부하여 BinaryContent를 생성합니다.")
@@ -68,7 +65,6 @@ public class BinaryContentController {
         if (binaryContentDto.bytes() != null && !binaryContentDto.bytes().isEmpty()) {
             decodedBytes = Base64.getDecoder().decode(binaryContentDto.bytes());
         }
-//---------------------
         return ResponseEntity.ok(binaryContentDto);
     }
 

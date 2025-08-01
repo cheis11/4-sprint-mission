@@ -62,14 +62,16 @@ public class BasicChannelService implements ChannelService {
         channelRepository.save(channel);
 
         List<UserDto> participants = new ArrayList<>();
-        BinaryContentDto binaryContentDto;
         for (UUID userId : userIds) {
-            User user =
-                    userRepository
-                            .findById(userId)
-                            .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다: " + userId));
-            binaryContentDto = toBinaryContentDto(user.getProfile());
-            participants.add(userMapper.userToUserDto(user,binaryContentDto));
+            User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다: " + userId));
+
+            ReadStatus readStatus = new ReadStatus(user, channel);
+            readStatusRepository.save(readStatus);
+
+            BinaryContentDto binaryContentDto = toBinaryContentDto(user.getProfile());
+            participants.add(userMapper.userToUserDto(user, binaryContentDto));
         }
 
         return channelMapper.channelToChannelDto(channel, null, participants);
@@ -79,12 +81,14 @@ public class BasicChannelService implements ChannelService {
     public List<ChannelDto> findAllByUserId(UUID userId) {
         List<Channel> publicChannels = channelRepository.findAllByType(ChannelType.PUBLIC);
 
-        List<Channel> participatedChannels =
-                readStatusRepository.findAllByUserId(userId).stream().map(ReadStatus::getChannel).toList();
+        List<Channel> privateChannels = readStatusRepository.findAllByUserId(userId).stream()
+            .map(ReadStatus::getChannel)
+            .filter(channel ->  channel.getType().equals(ChannelType.PRIVATE))
+            .toList();
 
         Set<Channel> allChannels = new HashSet<>();
         allChannels.addAll(publicChannels);
-        allChannels.addAll(participatedChannels);
+        allChannels.addAll(privateChannels);
 
         return allChannels.stream()
                 .map(
@@ -130,7 +134,7 @@ public class BasicChannelService implements ChannelService {
         }
 
         return messageRepository.findAllByChannelIdAndAuthorId(channelId, userId).stream()
-                .map(messageMapper::messageToMessageResponseDto)
+                .map(message -> messageMapper.messageToMessageDto(message,messageToBinaryContentDto(message)))
                 .collect(Collectors.toList());
     }
 
@@ -243,5 +247,20 @@ public class BasicChannelService implements ChannelService {
         } catch (IOException e) {
             throw new RuntimeException("프로필 이미지 로딩 실패", e);
         }
+    }
+
+    private List<BinaryContentDto> messageToBinaryContentDto(Message message) {
+        return message.getMessageAttachments().stream()
+            .map(MessageAttachment::getAttachment)
+            .map(attachment -> {
+                try (InputStream in = binaryContentStorage.get(attachment.getId())) {
+                    byte[] bytes = in.readAllBytes();
+                    String encoded = Base64.getEncoder().encodeToString(bytes);
+                    return binaryContentMapper.binaryContentToBinaryContentDto(attachment, encoded);
+                } catch (IOException e) {
+                    throw new RuntimeException("BinaryContent 로드 실패: " + attachment.getId(), e);
+                }
+            })
+            .collect(Collectors.toList());
     }
 }
