@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.0'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 group = 'com.sprint.mission'
@@ -21,6 +22,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
@@ -35,9 +37,22 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    testImplementation 'org.mockito:mockito-core:4.3.1'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+spotless{
+    java{
+        googleJavaFormat()
+    }
 }

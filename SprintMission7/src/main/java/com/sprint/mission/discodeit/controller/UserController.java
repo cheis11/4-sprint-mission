@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 @RequestMapping("/api/users")
 public class UserController implements UserApi {
 
@@ -40,74 +42,81 @@ public class UserController implements UserApi {
   @Override
   public ResponseEntity<UserDto> create(
       @RequestPart("userCreateRequest") UserCreateRequest userCreateRequest,
-      @RequestPart(value = "profile", required = false) MultipartFile profile
-  ) {
-    Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
-        .flatMap(this::resolveProfileRequest);
+      @RequestPart(value = "profile", required = false) MultipartFile profile) {
+    log.info("[UserController] POST /api/users started - username: {}, profile uploaded: {},"
+        ,userCreateRequest.username(),profile != null && !profile.isEmpty());
+    Optional<BinaryContentCreateRequest> profileRequest =
+        Optional.ofNullable(profile).flatMap(this::resolveProfileRequest);
     UserDto createdUser = userService.create(userCreateRequest, profileRequest);
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(createdUser);
+
+    log.info("[UserController] User created - userId: {}", createdUser.id());
+    return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
 
   @PatchMapping(
       path = "{userId}",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
+      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @Override
   public ResponseEntity<UserDto> update(
       @PathVariable("userId") UUID userId,
       @RequestPart("userUpdateRequest") UserUpdateRequest userUpdateRequest,
-      @RequestPart(value = "profile", required = false) MultipartFile profile
-  ) {
-    Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
-        .flatMap(this::resolveProfileRequest);
+      @RequestPart(value = "profile", required = false) MultipartFile profile) {
+    log.info("[UserController] PATCH /api/users/{} started - profile uploaded: {}",
+        userId, profile != null && !profile.isEmpty());
+    Optional<BinaryContentCreateRequest> profileRequest =
+        Optional.ofNullable(profile).flatMap(this::resolveProfileRequest);
     UserDto updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(updatedUser);
+    log.info("[UserController] User updated - userId: {}", updatedUser.id());
+    return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
   }
 
   @DeleteMapping(path = "{userId}")
   @Override
   public ResponseEntity<Void> delete(@PathVariable("userId") UUID userId) {
+    log.info("[UserController] DELETE /api/users/{} started", userId);
     userService.delete(userId);
-    return ResponseEntity
-        .status(HttpStatus.NO_CONTENT)
-        .build();
+    log.info("[UserController] User deleted - userId: {}", userId);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   @GetMapping
   @Override
   public ResponseEntity<List<UserDto>> findAll() {
+    log.info("[UserController] GET /api/users started");
     List<UserDto> users = userService.findAll();
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(users);
+    log.info("[UserController] All users retrieved - count: {}", users.size());
+    return ResponseEntity.status(HttpStatus.OK).body(users);
   }
 
   @PatchMapping(path = "{userId}/userStatus")
   @Override
-  public ResponseEntity<UserStatusDto> updateUserStatusByUserId(@PathVariable("userId") UUID userId,
-      @RequestBody UserStatusUpdateRequest request) {
+  public ResponseEntity<UserStatusDto> updateUserStatusByUserId(
+      @PathVariable("userId") UUID userId, @RequestBody UserStatusUpdateRequest request) {
+    log.info("[UserController] PATCH /api/users/{}/userStatus started", userId);
     UserStatusDto updatedUserStatus = userStatusService.updateByUserId(userId, request);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(updatedUserStatus);
+    log.info("[UserController] User status updated - userId: {}", userId);
+    return ResponseEntity.status(HttpStatus.OK).body(updatedUserStatus);
   }
 
   private Optional<BinaryContentCreateRequest> resolveProfileRequest(MultipartFile profileFile) {
     if (profileFile.isEmpty()) {
+      log.debug("[UserController] Profile file is empty");
       return Optional.empty();
     } else {
       try {
-        BinaryContentCreateRequest binaryContentCreateRequest = new BinaryContentCreateRequest(
+        log.debug("[UserController] Processing profile file - name: {}, type: {}, size: {} bytes",
             profileFile.getOriginalFilename(),
             profileFile.getContentType(),
-            profileFile.getBytes()
-        );
+            profileFile.getSize());
+
+        BinaryContentCreateRequest binaryContentCreateRequest =
+            new BinaryContentCreateRequest(
+                profileFile.getOriginalFilename(),
+                profileFile.getContentType(),
+                profileFile.getBytes());
         return Optional.of(binaryContentCreateRequest);
       } catch (IOException e) {
+        log.error("[UserController] Failed to process profile file", e);
         throw new RuntimeException(e);
       }
     }

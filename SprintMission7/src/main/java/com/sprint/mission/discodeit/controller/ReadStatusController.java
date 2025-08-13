@@ -29,25 +29,20 @@ public class ReadStatusController implements ReadStatusApi {
   @PostMapping
   public ResponseEntity<ReadStatusDto> create(@RequestBody ReadStatusCreateRequest request) {
     ReadStatusDto createdReadStatus = readStatusService.create(request);
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(createdReadStatus);
+    return ResponseEntity.status(HttpStatus.CREATED).body(createdReadStatus);
   }
 
   @PatchMapping(path = "{readStatusId}")
-  public ResponseEntity<ReadStatusDto> update(@PathVariable("readStatusId") UUID readStatusId,
+  public ResponseEntity<ReadStatusDto> update(
+      @PathVariable("readStatusId") UUID readStatusId,
       @RequestBody ReadStatusUpdateRequest request) {
     ReadStatusDto updatedReadStatus = readStatusService.update(readStatusId, request);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(updatedReadStatus);
+    return ResponseEntity.status(HttpStatus.OK).body(updatedReadStatus);
   }
 
   @GetMapping
   public ResponseEntity<List<ReadStatusDto>> findAllByUserId(@RequestParam("userId") UUID userId) {
     List<ReadStatusDto> readStatuses = readStatusService.findAllByUserId(userId);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(readStatuses);
+    return ResponseEntity.status(HttpStatus.OK).body(readStatuses);
   }
 }
