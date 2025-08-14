@@ -3,7 +3,7 @@ package com.sprint.mission.discodeit.service.basic;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.LoginRequest;
 import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.exception.auth.InvalidUserArgumentException;
+import com.sprint.mission.discodeit.exception.auth.InvalidAuthArgumentException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.UserMapper;
 import com.sprint.mission.discodeit.repository.UserRepository;
@@ -32,7 +32,7 @@ public class BasicAuthService implements AuthService {
             .orElseThrow(() -> new UserNotFoundException(Map.of("username", username)));
 
     if (!user.getPassword().equals(password)) {
-      throw new InvalidUserArgumentException(Map.of("username", username));
+      throw new InvalidAuthArgumentException(Map.of("username", username));
     }
 
     return userMapper.toDto(user);

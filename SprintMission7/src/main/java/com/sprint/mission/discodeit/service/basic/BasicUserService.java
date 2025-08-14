@@ -7,6 +7,7 @@ import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.UserStatus;
+import com.sprint.mission.discodeit.exception.user.InvalidUserArgumentException;
 import com.sprint.mission.discodeit.exception.user.UserAlreadyExistsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.UserMapper;
@@ -106,6 +107,14 @@ public class BasicUserService implements UserService {
 
     String newUsername = userUpdateRequest.newUsername();
     String newEmail = userUpdateRequest.newEmail();
+    if (newEmail == null || newEmail.isEmpty()) {
+      log.warn("[UserService] Update failed - email is null or empty");
+      throw new InvalidUserArgumentException(Map.of("email", newEmail != null ? newEmail : ""));
+    }
+    if (newUsername == null || newUsername.isEmpty()) {
+      log.warn("[UserService] Update failed - username is null or empty");
+      throw new InvalidUserArgumentException(Map.of("username", newUsername != null ? newUsername : ""));
+    }
     if (userRepository.existsByEmail(newEmail)) {
       log.warn("[UserService] Update failed - email already exists: {}", newEmail);
       throw new UserAlreadyExistsException(Map.of("email", newEmail));

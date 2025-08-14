@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
     name = "read_statuses",
     uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "channel_id"})})
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class ReadStatus extends BaseUpdatableEntity {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)

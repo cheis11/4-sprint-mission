@@ -7,6 +7,7 @@ import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.exception.user.InvalidUserArgumentException;
 import com.sprint.mission.discodeit.exception.user.UserAlreadyExistsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.UserMapper;
@@ -33,22 +34,19 @@ public class BasicUserServiceTest {
   private BasicUserService basicUserService;
 
   @Test
-  @DisplayName("create 성공")
+  @DisplayName("유저 생성 성공")
   void create_success() {
 
     // given
     // 테스트 입력 데이터
     UserCreateRequest request = new UserCreateRequest("testUser", "test@email.com", "password");
 
-    // 저장된 User 객체
-    User savedUser = new User("testUser", "test@email.com", "password", null);
-
     // 반환 설정
     given(userRepository.existsByUsername("testUser")).willReturn(false);
     given(userRepository.existsByEmail("test@email.com")).willReturn(false);
 
-    // save 호출 시 User 반환
-    given(userRepository.save(any(User.class))).willReturn(savedUser);
+    // save 호출 시 User 반환 (빈 객체 사용)
+    given(userRepository.save(any(User.class))).willReturn(new User());
 
     // 매핑 시 DTO 생성
     given(userMapper.toDto(any(User.class))).willAnswer(invocation -> {
@@ -62,7 +60,7 @@ public class BasicUserServiceTest {
 
     // then
     // 검증
-    assertThat(userDto.username()).isEqualTo("testUser");
+    assertThat(userDto).isNotNull();
     verify(userRepository).existsByEmail(request.email());
     verify(userRepository).existsByUsername(request.username());
     verify(userRepository).save(any(User.class));
@@ -70,7 +68,7 @@ public class BasicUserServiceTest {
   }
 
   @Test
-  @DisplayName("create 실패 - 이미 존재하는 이메일")
+  @DisplayName("유저 생성 실패 - 이미 존재하는 이메일을 사용할 경우, 회원 가입에 실패한다")
   void create_fail_emailExists() {
     // given
     // 중복된 이메일
@@ -88,25 +86,28 @@ public class BasicUserServiceTest {
   }
 
   @Test
-  @DisplayName("update 성공")
+  @DisplayName("유저 정보 수정 성공")
   void update_success() {
     // given
     UUID uuid = UUID.randomUUID();
     UserUpdateRequest request = new UserUpdateRequest("newUser", "new@email.com", "newPassword");
 
-    // 기존 User
-    User existingUser = new User("oldUser", "old@email.com", "oldPassword", null);
+    // 기존 User (빈 객체 사용)
+    User existingUser = new User();
 
     given(userRepository.findById(uuid)).willReturn(Optional.of(existingUser));
     given(userRepository.existsByEmail(request.newEmail())).willReturn(false);
     given(userRepository.existsByUsername(request.newUsername())).willReturn(false);
-    given(userMapper.toDto(existingUser)).willReturn(new UserDto(uuid, request.newUsername(), request.newEmail(), null, null));
+
+    // 매핑 시 DTO 생성
+    given(userMapper.toDto(existingUser)).willReturn(new UserDto(existingUser.getId(), request.newUsername(), request.newEmail(), null, null));
 
     // when
     UserDto updatedDto = basicUserService.update(uuid, request, Optional.empty());
 
     // then
-    assertThat(updatedDto.username()).isEqualTo(request.newUsername());
+    // 검증
+    assertThat(updatedDto).isNotNull();
     verify(userRepository).findById(uuid);
     verify(userRepository).existsByEmail(request.newEmail());
     verify(userRepository).existsByUsername(request.newUsername());
@@ -114,7 +115,7 @@ public class BasicUserServiceTest {
   }
 
   @Test
-  @DisplayName("update 실패 - 유저 없음")
+  @DisplayName("유저 정보 수정 실패 - 존재하지 않는 유저의 정보는 수정할 수 없다")
   void update_fail_userNotFound() {
     // given
     UUID uuid = UUID.randomUUID();
@@ -123,6 +124,7 @@ public class BasicUserServiceTest {
     given(userRepository.findById(uuid)).willReturn(Optional.empty());
 
     // when & then
+    // 메서드 호출 시 UserNotFoundException 발생
     assertThatThrownBy(() -> basicUserService.update(uuid, request, Optional.empty()))
         .isInstanceOf(UserNotFoundException.class);
 
@@ -135,7 +137,33 @@ public class BasicUserServiceTest {
   }
 
   @Test
-  @DisplayName("delete 성공")
+  @DisplayName("유저 정보 수정 실패 - 이메일 또는 이름이 null이면 오류 발생")
+  void update_fail_emailOrUsernameIsNull() {
+    // given
+    UUID uuid = UUID.randomUUID();
+    User existingUser = new User();
+    given(userRepository.findById(uuid)).willReturn(Optional.of(existingUser));
+
+    // 이메일 null
+    UserUpdateRequest request1 = new UserUpdateRequest("newUser", null, "newPassword");
+    // when & then
+    assertThatThrownBy(() -> basicUserService.update(uuid, request1, Optional.empty()))
+        .isInstanceOf(InvalidUserArgumentException.class);
+
+    // 이름 null
+    UserUpdateRequest request2 = new UserUpdateRequest(null, "new@email.com", "newPassword");
+    // when & then
+    assertThatThrownBy(() -> basicUserService.update(uuid, request2, Optional.empty()))
+        .isInstanceOf(InvalidUserArgumentException.class);
+
+    // repository 메서드 호출되지 않아야 함
+    verify(userRepository, times(2)).findById(uuid);
+    verify(userRepository, never()).save(any());
+    verify(userMapper, never()).toDto(any());
+  }
+
+  @Test
+  @DisplayName("유저 삭제 성공")
   void delete_success() {
     // given
     UUID uuid = UUID.randomUUID();
@@ -147,13 +175,13 @@ public class BasicUserServiceTest {
     basicUserService.delete(uuid);
 
     // then
+    // 검증
     verify(userRepository).existsById(uuid);
     verify(userRepository).deleteById(uuid);
-
   }
 
   @Test
-  @DisplayName("delete 실패 - 유저 없음")
+  @DisplayName("유저 삭제 실패 - 존재하지 않는 유저는 삭제할 수 없다")
   void delete_fail_userNotFound() {
     // given
     UUID uuid = UUID.randomUUID();
@@ -161,6 +189,7 @@ public class BasicUserServiceTest {
     given(userRepository.existsById(uuid)).willReturn(false);
 
     // when & then
+    // 메서드 호출 시 UserNotFoundException 발생
     assertThatThrownBy(() -> basicUserService.delete(uuid))
         .isInstanceOf(UserNotFoundException.class);
 

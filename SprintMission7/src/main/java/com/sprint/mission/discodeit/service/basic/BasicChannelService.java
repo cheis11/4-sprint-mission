@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.exception.channel.InvalidChannelArgumentException;
 import com.sprint.mission.discodeit.exception.channel.PrivateChannelUpdateException;
 import com.sprint.mission.discodeit.mapper.ChannelMapper;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
@@ -29,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class BasicChannelService implements ChannelService {
 
   private final ChannelRepository channelRepository;
-  //
   private final ReadStatusRepository readStatusRepository;
   private final MessageRepository messageRepository;
   private final UserRepository userRepository;
@@ -39,6 +39,13 @@ public class BasicChannelService implements ChannelService {
   @Override
   public ChannelDto create(PublicChannelCreateRequest request) {
     log.info("[ChannelService] Create public channel started - name: {}", request.name());
+
+    if (request.name() == null || request.name().isEmpty()) {
+      log.warn("[ChannelService] Create failed - channel name is empty");
+      throw new InvalidChannelArgumentException(
+          Map.of("name", request.name() != null ? request.name() : "")
+      );
+    }
 
     Channel channel = new Channel(ChannelType.PUBLIC, request.name(), request.description());
     channelRepository.save(channel);
@@ -52,10 +59,15 @@ public class BasicChannelService implements ChannelService {
   public ChannelDto create(PrivateChannelCreateRequest request) {
     log.info("[ChannelService] Create private channel started");
 
+    if (request.participantIds() == null || request.participantIds().isEmpty()) {
+      log.warn("[ChannelService] Create private channel failed - participants is empty");
+      throw new InvalidChannelArgumentException(Map.of("participants", List.of()));
+    }
+    var participants = userRepository.findAllById(request.participantIds());
+
     Channel channel = new Channel(ChannelType.PRIVATE, null, null);
     channelRepository.save(channel);
 
-    var participants = userRepository.findAllById(request.participantIds());
     var readStatuses = participants.stream()
         .map(user -> new ReadStatus(user, channel, channel.getCreatedAt()))
         .toList();
