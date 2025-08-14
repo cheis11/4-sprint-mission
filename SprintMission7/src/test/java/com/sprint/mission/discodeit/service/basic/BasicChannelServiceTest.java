@@ -86,7 +86,7 @@ public class BasicChannelServiceTest {
         .isInstanceOf(InvalidChannelArgumentException.class);
 
     // 호출되면 안 됨
-    verify(channelRepository, never()).save(any());
+    verify(channelMapper, never()).toDto(any());
   }
 
   @Test
