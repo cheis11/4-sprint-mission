@@ -55,8 +55,7 @@ public class BasicUserStatusService implements UserStatusService {
     return userStatusRepository
         .findById(userStatusId)
         .map(userStatusMapper::toDto)
-        .orElseThrow(
-            () -> new UserStatusNotFoundException(Map.of("userStatusId", userStatusId)));
+        .orElseThrow(() -> new UserStatusNotFoundException(Map.of("userStatusId", userStatusId)));
   }
 
   @Override
@@ -73,8 +72,7 @@ public class BasicUserStatusService implements UserStatusService {
         userStatusRepository
             .findById(userStatusId)
             .orElseThrow(
-                () ->
-                    new UserStatusNotFoundException(Map.of("userStatusId", userStatusId)));
+                () -> new UserStatusNotFoundException(Map.of("userStatusId", userStatusId)));
     userStatus.update(newLastActiveAt);
 
     return userStatusMapper.toDto(userStatus);
@@ -88,9 +86,7 @@ public class BasicUserStatusService implements UserStatusService {
     UserStatus userStatus =
         userStatusRepository
             .findByUserId(userId)
-            .orElseThrow(
-                () ->
-                    new UserStatusNotFoundException(Map.of("userId", userId)));
+            .orElseThrow(() -> new UserStatusNotFoundException(Map.of("userId", userId)));
     userStatus.update(newLastActiveAt);
 
     return userStatusMapper.toDto(userStatus);

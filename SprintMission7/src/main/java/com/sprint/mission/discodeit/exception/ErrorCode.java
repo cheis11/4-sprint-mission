@@ -15,7 +15,8 @@ public enum ErrorCode {
   READ_STATUS_NOT_FOUND("Read status not found"),
   DUPLICATE_READ_STATUS("Duplicate read status"),
   USER_STATUS_NOT_FOUND("User status not found"),
-  DUPLICATE_USER_STATUS("Duplicate user status"),;
+  DUPLICATE_USER_STATUS("Duplicate user status"),
+  ;
 
   private final String message;
 

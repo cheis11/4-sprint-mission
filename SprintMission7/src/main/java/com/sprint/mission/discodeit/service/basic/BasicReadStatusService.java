@@ -41,14 +41,11 @@ public class BasicReadStatusService implements ReadStatusService {
     User user =
         userRepository
             .findById(userId)
-            .orElseThrow(
-                () -> new UserNotFoundException(Map.of("userId", userId)));
+            .orElseThrow(() -> new UserNotFoundException(Map.of("userId", userId)));
     Channel channel =
         channelRepository
             .findById(channelId)
-            .orElseThrow(
-                () ->
-                    new ChannelNotFoundException(Map.of("channelId", channelId)));
+            .orElseThrow(() -> new ChannelNotFoundException(Map.of("channelId", channelId)));
 
     if (readStatusRepository.existsByUserIdAndChannelId(user.getId(), channel.getId())) {
       throw new ReadStatusAlreadyExistsException(Map.of("userId", userId, "channelId", channelId));
@@ -66,8 +63,7 @@ public class BasicReadStatusService implements ReadStatusService {
     return readStatusRepository
         .findById(readStatusId)
         .map(readStatusMapper::toDto)
-        .orElseThrow(
-            () -> new ReadStatusNotFoundException(Map.of("readStatusId", readStatusId)));
+        .orElseThrow(() -> new ReadStatusNotFoundException(Map.of("readStatusId", readStatusId)));
   }
 
   @Override
@@ -85,8 +81,7 @@ public class BasicReadStatusService implements ReadStatusService {
         readStatusRepository
             .findById(readStatusId)
             .orElseThrow(
-                () ->
-                    new ReadStatusNotFoundException(Map.of("readStatusId", readStatusId)));
+                () -> new ReadStatusNotFoundException(Map.of("readStatusId", readStatusId)));
     readStatus.update(newLastReadAt);
     return readStatusMapper.toDto(readStatus);
   }

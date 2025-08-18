@@ -43,8 +43,10 @@ public class UserController implements UserApi {
   public ResponseEntity<UserDto> create(
       @RequestPart("userCreateRequest") UserCreateRequest userCreateRequest,
       @RequestPart(value = "profile", required = false) MultipartFile profile) {
-    log.info("[UserController] POST /api/users started - username: {}, profile uploaded: {},"
-        ,userCreateRequest.username(),profile != null && !profile.isEmpty());
+    log.info(
+        "[UserController] POST /api/users started - username: {}, profile uploaded: {},",
+        userCreateRequest.username(),
+        profile != null && !profile.isEmpty());
     Optional<BinaryContentCreateRequest> profileRequest =
         Optional.ofNullable(profile).flatMap(this::resolveProfileRequest);
     UserDto createdUser = userService.create(userCreateRequest, profileRequest);
@@ -61,8 +63,10 @@ public class UserController implements UserApi {
       @PathVariable("userId") UUID userId,
       @RequestPart("userUpdateRequest") UserUpdateRequest userUpdateRequest,
       @RequestPart(value = "profile", required = false) MultipartFile profile) {
-    log.info("[UserController] PATCH /api/users/{} started - profile uploaded: {}",
-        userId, profile != null && !profile.isEmpty());
+    log.info(
+        "[UserController] PATCH /api/users/{} started - profile uploaded: {}",
+        userId,
+        profile != null && !profile.isEmpty());
     Optional<BinaryContentCreateRequest> profileRequest =
         Optional.ofNullable(profile).flatMap(this::resolveProfileRequest);
     UserDto updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
@@ -104,7 +108,8 @@ public class UserController implements UserApi {
       return Optional.empty();
     } else {
       try {
-        log.debug("[UserController] Processing profile file - name: {}, type: {}, size: {} bytes",
+        log.debug(
+            "[UserController] Processing profile file - name: {}, type: {}, size: {} bytes",
             profileFile.getOriginalFilename(),
             profileFile.getContentType(),
             profileFile.getSize());

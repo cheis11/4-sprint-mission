@@ -6,8 +6,7 @@ import java.util.Map;
 
 public class InvalidUserArgumentException extends UserException {
 
-  public InvalidUserArgumentException(
-      Map<String, Object> details) {
+  public InvalidUserArgumentException(Map<String, Object> details) {
     super(Instant.now(), ErrorCode.INVALID_USER_ARGUMENT, details);
   }
 }

@@ -6,8 +6,7 @@ import java.util.Map;
 
 public class UserStatusAlreadyExistsException extends UserStatusException {
 
-  public UserStatusAlreadyExistsException(
-      Map<String, Object> details) {
+  public UserStatusAlreadyExistsException(Map<String, Object> details) {
     super(Instant.now(), ErrorCode.DUPLICATE_USER_STATUS, details);
   }
 }

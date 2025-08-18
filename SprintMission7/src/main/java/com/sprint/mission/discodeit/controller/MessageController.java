@@ -46,8 +46,10 @@ public class MessageController implements MessageApi {
       @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
       @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
 
-    log.info("[MessageController] Create started - channelId: {}, authorId: {}",
-        messageCreateRequest.channelId(), messageCreateRequest.authorId());
+    log.info(
+        "[MessageController] Create started - channelId: {}, authorId: {}",
+        messageCreateRequest.channelId(),
+        messageCreateRequest.authorId());
 
     List<BinaryContentCreateRequest> attachmentRequests =
         Optional.ofNullable(attachments)

@@ -24,14 +24,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class BasicUserServiceTest {
 
-  @Mock
-  private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @Mock
-  private UserMapper userMapper;
+  @Mock private UserMapper userMapper;
 
-  @InjectMocks
-  private BasicUserService basicUserService;
+  @InjectMocks private BasicUserService basicUserService;
 
   @Test
   @DisplayName("유저 생성 성공")
@@ -49,10 +46,13 @@ public class BasicUserServiceTest {
     given(userRepository.save(any(User.class))).willReturn(new User());
 
     // 매핑 시 DTO 생성
-    given(userMapper.toDto(any(User.class))).willAnswer(invocation -> {
-      User userArg = invocation.getArgument(0);
-      return new UserDto(userArg.getId(), userArg.getUsername(), userArg.getEmail(), null, null);
-    });
+    given(userMapper.toDto(any(User.class)))
+        .willAnswer(
+            invocation -> {
+              User userArg = invocation.getArgument(0);
+              return new UserDto(
+                  userArg.getId(), userArg.getUsername(), userArg.getEmail(), null, null);
+            });
 
     // when
     // 테스트 대상 메서드 호출
@@ -86,6 +86,21 @@ public class BasicUserServiceTest {
   }
 
   @Test
+  @DisplayName("유저 생성 실패 - 이미 존재하는 유저 이름을 사용할 경우, 회원 가입에 실패한다")
+  void create_fail_usernameExists() {
+    // given
+    // 중복된 유저 이름
+    UserCreateRequest request = new UserCreateRequest("testUser", "test@email.com", "password");
+    given(userRepository.existsByUsername(request.username())).willReturn(true);
+
+    assertThatThrownBy(() -> basicUserService.create(request, Optional.empty()))
+        .isInstanceOf(UserAlreadyExistsException.class);
+
+    verify(userRepository).existsByUsername(request.username());
+    verify(userRepository, never()).save(any());
+  }
+
+  @Test
   @DisplayName("유저 정보 수정 성공")
   void update_success() {
     // given
@@ -100,7 +115,10 @@ public class BasicUserServiceTest {
     given(userRepository.existsByUsername(request.newUsername())).willReturn(false);
 
     // 매핑 시 DTO 생성
-    given(userMapper.toDto(existingUser)).willReturn(new UserDto(existingUser.getId(), request.newUsername(), request.newEmail(), null, null));
+    given(userMapper.toDto(existingUser))
+        .willReturn(
+            new UserDto(
+                existingUser.getId(), request.newUsername(), request.newEmail(), null, null));
 
     // when
     UserDto updatedDto = basicUserService.update(uuid, request, Optional.empty());
@@ -159,6 +177,48 @@ public class BasicUserServiceTest {
     // repository 메서드 호출되지 않아야 함
     verify(userRepository, times(2)).findById(uuid);
     verify(userRepository, never()).save(any());
+    verify(userMapper, never()).toDto(any());
+  }
+
+  @Test
+  @DisplayName("유저 정보 수정 실패 - 이메일이 이미 존재하면 오류 발생")
+  void update_fail_emailAlreadyExists() {
+    // given
+    UUID userId = UUID.randomUUID();
+    User existingUser = new User();
+    given(userRepository.findById(userId)).willReturn(Optional.of(existingUser));
+    given(userRepository.existsByEmail("existing@email.com")).willReturn(true);
+
+    UserUpdateRequest request =
+        new UserUpdateRequest("newUsername", "existing@email.com", "newPassword");
+
+    // when & then
+    assertThatThrownBy(() -> basicUserService.update(userId, request, Optional.empty()))
+        .isInstanceOf(UserAlreadyExistsException.class);
+
+    verify(userRepository).findById(userId);
+    verify(userRepository).existsByEmail("existing@email.com");
+    verify(userMapper, never()).toDto(any());
+  }
+
+  @Test
+  @DisplayName("유저 정보 수정 실패 - 이름이 이미 존재하면 오류 발생")
+  void update_fail_usernameAlreadyExists() {
+    // given
+    UUID userId = UUID.randomUUID();
+    User existingUser = new User();
+    given(userRepository.findById(userId)).willReturn(Optional.of(existingUser));
+    given(userRepository.existsByUsername("existingUsername")).willReturn(true);
+
+    UserUpdateRequest request =
+        new UserUpdateRequest("existingUsername", "new@email.com", "newPassword");
+
+    // when & then
+    assertThatThrownBy(() -> basicUserService.update(userId, request, Optional.empty()))
+        .isInstanceOf(UserAlreadyExistsException.class);
+
+    verify(userRepository).findById(userId);
+    verify(userRepository).existsByUsername("existingUsername");
     verify(userMapper, never()).toDto(any());
   }
 

@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,13 +49,19 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     log.info("[BinaryContentStorage] Upload started - binaryContentId: {}", binaryContentId);
     Path filePath = resolvePath(binaryContentId);
     if (Files.exists(filePath)) {
-      log.warn("[BinaryContentStorage] Upload failed - file already exists - binaryContentId: {}", binaryContentId);
+      log.warn(
+          "[BinaryContentStorage] Upload failed - file already exists - binaryContentId: {}",
+          binaryContentId);
       throw new BinaryContentAlreadyExistsException(Map.of("binaryContentId", binaryContentId));
     }
     try (OutputStream outputStream = Files.newOutputStream(filePath)) {
       outputStream.write(bytes);
     } catch (IOException e) {
-      log.error("[BinaryContentStorage] Upload failed - binaryContentId: {}, error: {}", binaryContentId, e.getMessage(), e);
+      log.error(
+          "[BinaryContentStorage] Upload failed - binaryContentId: {}, error: {}",
+          binaryContentId,
+          e.getMessage(),
+          e);
       throw new RuntimeException(e);
     }
     log.info("[BinaryContentStorage] Upload completed - binaryContentId: {}", binaryContentId);
@@ -82,12 +87,14 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
 
   @Override
   public ResponseEntity<Resource> download(BinaryContentDto metaData) {
-    log.info("[BinaryContentStorage] Download response preparing - binaryContentId: {}", metaData.id());
+    log.info(
+        "[BinaryContentStorage] Download response preparing - binaryContentId: {}", metaData.id());
     InputStream inputStream = get(metaData.id());
     Resource resource = new InputStreamResource(inputStream);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + metaData.fileName() + "\"")
+        .header(
+            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + metaData.fileName() + "\"")
         .header(HttpHeaders.CONTENT_TYPE, metaData.contentType())
         .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(metaData.size()))
         .body(resource);

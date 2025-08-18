@@ -49,8 +49,10 @@ public class BasicMessageService implements MessageService {
       MessageCreateRequest messageCreateRequest,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
 
-    log.info("[MessageService] Create started - channelId: {}, authorId: {}",
-        messageCreateRequest.channelId(), messageCreateRequest.authorId());
+    log.info(
+        "[MessageService] Create started - channelId: {}, authorId: {}",
+        messageCreateRequest.channelId(),
+        messageCreateRequest.authorId());
 
     UUID channelId = messageCreateRequest.channelId();
     UUID authorId = messageCreateRequest.authorId();
@@ -58,17 +60,19 @@ public class BasicMessageService implements MessageService {
     Channel channel =
         channelRepository
             .findById(channelId)
-            .orElseThrow(() -> {
-              log.warn("[MessageService] Create failed - channel not found: {}", channelId);
-              return new MessageNotFoundException(Map.of("channelId", channelId));
-            });
+            .orElseThrow(
+                () -> {
+                  log.warn("[MessageService] Create failed - channel not found: {}", channelId);
+                  return new MessageNotFoundException(Map.of("channelId", channelId));
+                });
     User author =
         userRepository
             .findById(authorId)
-            .orElseThrow(() -> {
-              log.warn("[MessageService] Create failed - author not found: {}", authorId);
-              return new MessageNotFoundException(Map.of("authorId", authorId));
-            });
+            .orElseThrow(
+                () -> {
+                  log.warn("[MessageService] Create failed - author not found: {}", authorId);
+                  return new MessageNotFoundException(Map.of("authorId", authorId));
+                });
 
     List<BinaryContent> attachments =
         binaryContentCreateRequests.stream()
@@ -102,8 +106,7 @@ public class BasicMessageService implements MessageService {
     return messageRepository
         .findById(messageId)
         .map(messageMapper::toDto)
-        .orElseThrow(
-            () -> new MessageNotFoundException(Map.of("messageId", messageId)));
+        .orElseThrow(() -> new MessageNotFoundException(Map.of("messageId", messageId)));
   }
 
   @Transactional(readOnly = true)
@@ -132,10 +135,11 @@ public class BasicMessageService implements MessageService {
     Message message =
         messageRepository
             .findById(messageId)
-            .orElseThrow(() -> {
-              log.warn("[MessageService] Update failed - message not found: {}", messageId);
-              return new MessageNotFoundException(Map.of("messageId", messageId));
-            });
+            .orElseThrow(
+                () -> {
+                  log.warn("[MessageService] Update failed - message not found: {}", messageId);
+                  return new MessageNotFoundException(Map.of("messageId", messageId));
+                });
 
     message.update(request.newContent());
 

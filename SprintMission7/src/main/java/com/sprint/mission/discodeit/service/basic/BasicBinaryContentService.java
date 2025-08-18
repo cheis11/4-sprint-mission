@@ -45,8 +45,7 @@ public class BasicBinaryContentService implements BinaryContentService {
         .findById(binaryContentId)
         .map(binaryContentMapper::toDto)
         .orElseThrow(
-            () ->
-                new BinaryContentNotFoundException(Map.of("binaryContentId", binaryContentId)));
+            () -> new BinaryContentNotFoundException(Map.of("binaryContentId", binaryContentId)));
   }
 
   @Override

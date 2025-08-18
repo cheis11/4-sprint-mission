@@ -34,7 +34,8 @@ public class ChannelController implements ChannelApi {
   public ResponseEntity<ChannelDto> create(@RequestBody PublicChannelCreateRequest request) {
     log.info("[ChannelController] Create public channel started - name: {}", request.name());
     ChannelDto createdChannel = channelService.create(request);
-    log.info("[ChannelController] Create public channel completed - channelId: {}", createdChannel.id());
+    log.info(
+        "[ChannelController] Create public channel completed - channelId: {}", createdChannel.id());
     return ResponseEntity.status(HttpStatus.CREATED).body(createdChannel);
   }
 
@@ -42,7 +43,9 @@ public class ChannelController implements ChannelApi {
   public ResponseEntity<ChannelDto> create(@RequestBody PrivateChannelCreateRequest request) {
     log.info("[ChannelController] Create private channel started");
     ChannelDto createdChannel = channelService.create(request);
-    log.info("[ChannelController] Create private channel completed - channelId: {}", createdChannel.id());
+    log.info(
+        "[ChannelController] Create private channel completed - channelId: {}",
+        createdChannel.id());
     return ResponseEntity.status(HttpStatus.CREATED).body(createdChannel);
   }
 

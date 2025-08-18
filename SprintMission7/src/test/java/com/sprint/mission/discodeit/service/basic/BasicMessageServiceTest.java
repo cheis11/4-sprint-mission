@@ -37,32 +37,23 @@ import org.springframework.data.domain.SliceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class BasicMessageServiceTest {
-  @Mock
-  private MessageRepository messageRepository;
+  @Mock private MessageRepository messageRepository;
 
-  @Mock
-  private ChannelRepository channelRepository;
+  @Mock private ChannelRepository channelRepository;
 
-  @Mock
-  private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @Mock
-  private MessageMapper messageMapper;
+  @Mock private MessageMapper messageMapper;
 
-  @Mock
-  private BinaryContentStorage binaryContentStorage;
+  @Mock private BinaryContentStorage binaryContentStorage;
 
-  @Mock
-  private BinaryContentRepository binaryContentRepository;
+  @Mock private BinaryContentRepository binaryContentRepository;
 
-  @Mock
-  private PageResponseMapper pageResponseMapper;
+  @Mock private PageResponseMapper pageResponseMapper;
 
-  @Mock
-  private UserMapper userMapper;
+  @Mock private UserMapper userMapper;
 
-  @InjectMocks
-  private BasicMessageService basicMessageService;
+  @InjectMocks private BasicMessageService basicMessageService;
 
   @Test
   @DisplayName("메시지 생성 성공")
@@ -84,18 +75,18 @@ public class BasicMessageServiceTest {
 
     // mapper 반환 설정
     given(messageMapper.toDto(any(Message.class)))
-        .willAnswer(invocation -> {
-          Message msg = invocation.getArgument(0);
-          return new MessageDto(
-              msg.getId(),
-              msg.getCreatedAt(),
-              msg.getUpdatedAt(),
-              msg.getContent(),
-              msg.getChannel().getId(),
-              userMapper.toDto(msg.getAuthor()),
-              List.of()
-          );
-        });
+        .willAnswer(
+            invocation -> {
+              Message msg = invocation.getArgument(0);
+              return new MessageDto(
+                  msg.getId(),
+                  msg.getCreatedAt(),
+                  msg.getUpdatedAt(),
+                  msg.getContent(),
+                  msg.getChannel().getId(),
+                  userMapper.toDto(msg.getAuthor()),
+                  List.of());
+            });
 
     // when
     MessageDto messageDto = basicMessageService.create(request, binaryRequestList);
@@ -161,15 +152,8 @@ public class BasicMessageServiceTest {
     Message message = mock(Message.class);
     Instant now = Instant.now();
 
-    MessageDto messageDto = new MessageDto(
-        messageId,
-        now,
-        now,
-        newContent,
-        UUID.randomUUID(),
-        null,
-        List.of()
-    );
+    MessageDto messageDto =
+        new MessageDto(messageId, now, now, newContent, UUID.randomUUID(), null, List.of());
 
     given(messageRepository.findById(messageId)).willReturn(Optional.of(message));
     given(messageMapper.toDto(message)).willReturn(messageDto);
@@ -233,6 +217,7 @@ public class BasicMessageServiceTest {
     verify(messageRepository, never()).deleteById(any());
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   @DisplayName("채널 메시지 조회 성공")
   void findAllByChannelId_success() {
@@ -245,32 +230,50 @@ public class BasicMessageServiceTest {
     Message message1 = new Message("content1", null, null, List.of());
     Message message2 = new Message("content2", null, null, List.of());
 
-    MessageDto dto1 = new MessageDto(message1.getId(), message1.getCreatedAt(), message1.getUpdatedAt(),
-        message1.getContent(), null, null, List.of());
-    MessageDto dto2 = new MessageDto(message2.getId(), message2.getCreatedAt(), message2.getUpdatedAt(),
-        message2.getContent(), null, null, List.of());
+    MessageDto dto1 =
+        new MessageDto(
+            message1.getId(),
+            message1.getCreatedAt(),
+            message1.getUpdatedAt(),
+            message1.getContent(),
+            null,
+            null,
+            List.of());
+    MessageDto dto2 =
+        new MessageDto(
+            message2.getId(),
+            message2.getCreatedAt(),
+            message2.getUpdatedAt(),
+            message2.getContent(),
+            null,
+            null,
+            List.of());
 
     Slice<Message> messageSlice = new SliceImpl<>(List.of(message1, message2), pageable, false);
 
     // 반환 설정
-    given(messageRepository.findAllByChannelIdWithAuthor(eq(channelId), any(Instant.class), eq(pageable)))
+    given(
+            messageRepository.findAllByChannelIdWithAuthor(
+                eq(channelId), any(Instant.class), eq(pageable)))
         .willReturn(messageSlice);
     given(messageMapper.toDto(message1)).willReturn(dto1);
     given(messageMapper.toDto(message2)).willReturn(dto2);
-    given(pageResponseMapper.fromSlice(any(Slice.class), any())).willAnswer(invocation -> {
-      Slice<MessageDto> sliceArg = invocation.getArgument(0);
-      Instant nextCursorArg = invocation.getArgument(1);
-      return new PageResponse<>(
-          sliceArg.getContent(),
-          nextCursorArg,
-          sliceArg.getSize(),
-          sliceArg.hasNext(),
-          (long) sliceArg.getNumberOfElements()
-      );
-    });
+    given(pageResponseMapper.fromSlice(any(Slice.class), any()))
+        .willAnswer(
+            invocation -> {
+              Slice<MessageDto> sliceArg = invocation.getArgument(0);
+              Instant nextCursorArg = invocation.getArgument(1);
+              return new PageResponse<>(
+                  sliceArg.getContent(),
+                  nextCursorArg,
+                  sliceArg.getSize(),
+                  sliceArg.hasNext(),
+                  (long) sliceArg.getNumberOfElements());
+            });
 
     // when
-    PageResponse<MessageDto> response = basicMessageService.findAllByChannelId(channelId, createAt, pageable);
+    PageResponse<MessageDto> response =
+        basicMessageService.findAllByChannelId(channelId, createAt, pageable);
 
     // then
     assertThat(response.content()).hasSize(2);
@@ -279,12 +282,14 @@ public class BasicMessageServiceTest {
     assertThat(response.hasNext()).isFalse();
     assertThat(response.totalElements()).isEqualTo(2L);
 
-    verify(messageRepository).findAllByChannelIdWithAuthor(eq(channelId), any(Instant.class), eq(pageable));
+    verify(messageRepository)
+        .findAllByChannelIdWithAuthor(eq(channelId), any(Instant.class), eq(pageable));
     verify(messageMapper).toDto(message1);
     verify(messageMapper).toDto(message2);
     verify(pageResponseMapper).fromSlice(any(Slice.class), any());
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   @DisplayName("채널 메시지 조회 - 메시지 없음")
   void findAllByChannelId_empty() {
@@ -296,25 +301,28 @@ public class BasicMessageServiceTest {
     // 빈 Slice 반환
     Slice<Message> emptySlice = new SliceImpl<>(List.of(), pageable, false);
 
-    given(messageRepository.findAllByChannelIdWithAuthor(eq(channelId), any(Instant.class), eq(pageable)))
+    given(
+            messageRepository.findAllByChannelIdWithAuthor(
+                eq(channelId), any(Instant.class), eq(pageable)))
         .willReturn(emptySlice);
 
     // pageResponseMapper는 그대로 빈 content 반환
     given(pageResponseMapper.fromSlice(any(Slice.class), any()))
-        .willAnswer(invocation -> {
-          Slice<MessageDto> sliceArg = invocation.getArgument(0);
-          Instant nextCursorArg = invocation.getArgument(1);
-          return new PageResponse<>(
-              sliceArg.getContent(),
-              nextCursorArg,
-              sliceArg.getSize(),
-              sliceArg.hasNext(),
-              (long) sliceArg.getNumberOfElements()
-          );
-        });
+        .willAnswer(
+            invocation -> {
+              Slice<MessageDto> sliceArg = invocation.getArgument(0);
+              Instant nextCursorArg = invocation.getArgument(1);
+              return new PageResponse<>(
+                  sliceArg.getContent(),
+                  nextCursorArg,
+                  sliceArg.getSize(),
+                  sliceArg.hasNext(),
+                  (long) sliceArg.getNumberOfElements());
+            });
 
     // when
-    PageResponse<MessageDto> response = basicMessageService.findAllByChannelId(channelId, createAt, pageable);
+    PageResponse<MessageDto> response =
+        basicMessageService.findAllByChannelId(channelId, createAt, pageable);
 
     // then
     assertThat(response.content()).isEmpty();
@@ -323,9 +331,8 @@ public class BasicMessageServiceTest {
     assertThat(response.hasNext()).isFalse();
     assertThat(response.totalElements()).isEqualTo(0L);
 
-    verify(messageRepository).findAllByChannelIdWithAuthor(eq(channelId), any(Instant.class), eq(pageable));
+    verify(messageRepository)
+        .findAllByChannelIdWithAuthor(eq(channelId), any(Instant.class), eq(pageable));
     verify(pageResponseMapper).fromSlice(any(Slice.class), any());
   }
-
 }
-

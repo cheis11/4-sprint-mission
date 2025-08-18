@@ -40,8 +40,10 @@ public class BasicUserService implements UserService {
   public UserDto create(
       UserCreateRequest userCreateRequest,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
-    log.info("[UserService] Create started - username: {}, email: {}",
-        userCreateRequest.username(), userCreateRequest.email());
+    log.info(
+        "[UserService] Create started - username: {}, email: {}",
+        userCreateRequest.username(),
+        userCreateRequest.email());
     String username = userCreateRequest.username();
     String email = userCreateRequest.email();
 
@@ -99,11 +101,14 @@ public class BasicUserService implements UserService {
       UserUpdateRequest userUpdateRequest,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
     log.info("[UserService] Update started - userId: {}", userId);
-    User user = userRepository.findById(userId)
-            .orElseThrow(() -> {
-              log.warn("[UserService] Update failed - user not found: {}", userId);
-              return new UserNotFoundException(Map.of("userId", userId));
-            });
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(
+                () -> {
+                  log.warn("[UserService] Update failed - user not found: {}", userId);
+                  return new UserNotFoundException(Map.of("userId", userId));
+                });
 
     String newUsername = userUpdateRequest.newUsername();
     String newEmail = userUpdateRequest.newEmail();
@@ -113,7 +118,8 @@ public class BasicUserService implements UserService {
     }
     if (newUsername == null || newUsername.isEmpty()) {
       log.warn("[UserService] Update failed - username is null or empty");
-      throw new InvalidUserArgumentException(Map.of("username", newUsername != null ? newUsername : ""));
+      throw new InvalidUserArgumentException(
+          Map.of("username", newUsername != null ? newUsername : ""));
     }
     if (userRepository.existsByEmail(newEmail)) {
       log.warn("[UserService] Update failed - email already exists: {}", newEmail);

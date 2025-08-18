@@ -43,8 +43,7 @@ public class BasicChannelService implements ChannelService {
     if (request.name() == null || request.name().isEmpty()) {
       log.warn("[ChannelService] Create failed - channel name is empty");
       throw new InvalidChannelArgumentException(
-          Map.of("name", request.name() != null ? request.name() : "")
-      );
+          Map.of("name", request.name() != null ? request.name() : ""));
     }
 
     Channel channel = new Channel(ChannelType.PUBLIC, request.name(), request.description());
@@ -68,9 +67,10 @@ public class BasicChannelService implements ChannelService {
     Channel channel = new Channel(ChannelType.PRIVATE, null, null);
     channelRepository.save(channel);
 
-    var readStatuses = participants.stream()
-        .map(user -> new ReadStatus(user, channel, channel.getCreatedAt()))
-        .toList();
+    var readStatuses =
+        participants.stream()
+            .map(user -> new ReadStatus(user, channel, channel.getCreatedAt()))
+            .toList();
     readStatusRepository.saveAll(readStatuses);
 
     log.info("[ChannelService] Create private channel completed - channelId: {}", channel.getId());
@@ -107,11 +107,15 @@ public class BasicChannelService implements ChannelService {
   public ChannelDto update(UUID channelId, PublicChannelUpdateRequest request) {
     log.info("[ChannelService] Update channel started - channelId: {}", channelId);
 
-    Channel channel = channelRepository.findById(channelId)
-        .orElseThrow(() -> new ChannelNotFoundException(Map.of("channelId", channelId)));
+    Channel channel =
+        channelRepository
+            .findById(channelId)
+            .orElseThrow(() -> new ChannelNotFoundException(Map.of("channelId", channelId)));
 
     if (channel.getType().equals(ChannelType.PRIVATE)) {
-      log.warn("[ChannelService] Update failed - private channel cannot be updated - channelId: {}", channelId);
+      log.warn(
+          "[ChannelService] Update failed - private channel cannot be updated - channelId: {}",
+          channelId);
       throw new PrivateChannelUpdateException(Map.of("channelId", channelId));
     }
 

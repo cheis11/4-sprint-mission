@@ -32,43 +32,40 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class BasicChannelServiceTest {
 
-  @Mock
-  private ChannelRepository channelRepository;
+  @Mock private ChannelRepository channelRepository;
 
-  @Mock
-  private ReadStatusRepository readStatusRepository;
+  @Mock private ReadStatusRepository readStatusRepository;
 
-  @Mock
-  private MessageRepository messageRepository;
+  @Mock private MessageRepository messageRepository;
 
-  @Mock
-  private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @Mock
-  private ChannelMapper channelMapper;
+  @Mock private ChannelMapper channelMapper;
 
-  @InjectMocks
-  private BasicChannelService basicChannelService;
+  @InjectMocks private BasicChannelService basicChannelService;
 
   @Test
   @DisplayName("Public 채널 생성 성공")
-  void createPublic_success(){
+  void createPublic_success() {
     // given
     // 테스트 데이터
     PublicChannelCreateRequest request = new PublicChannelCreateRequest("test", "testDes");
     Channel channel = new Channel(ChannelType.PUBLIC, "test", "testDes");
 
-    //반환 설정
+    // 반환 설정
     given(channelRepository.save(any(Channel.class))).willReturn(channel);
-    given(channelMapper.toDto(any(Channel.class))).willAnswer(invocation -> {
-      Channel ch = invocation.getArgument(0);
-      return new ChannelDto(ch.getId(),ChannelType.PUBLIC,ch.getName(),ch.getDescription(), null, null);
-    });
+    given(channelMapper.toDto(any(Channel.class)))
+        .willAnswer(
+            invocation -> {
+              Channel ch = invocation.getArgument(0);
+              return new ChannelDto(
+                  ch.getId(), ChannelType.PUBLIC, ch.getName(), ch.getDescription(), null, null);
+            });
 
     // when
     ChannelDto channelDto = basicChannelService.create(request);
 
-    //then
+    // then
     assertThat(channelDto.name()).isEqualTo("test");
     verify(channelRepository).save(any(Channel.class));
     verify(channelMapper).toDto(any(Channel.class));
@@ -76,7 +73,7 @@ public class BasicChannelServiceTest {
 
   @Test
   @DisplayName("Public 채널 생성 실패 - 채널의 이름이 없으면 채널을 생성할 수 없습니다")
-  void createPublic_fail(){
+  void createPublic_fail() {
     // given
     // 이름 없는 요청
     PublicChannelCreateRequest request = new PublicChannelCreateRequest(null, "testDes");
@@ -91,33 +88,37 @@ public class BasicChannelServiceTest {
 
   @Test
   @DisplayName("Private 채널 생성 성공")
-  void createPrivate_success(){
+  void createPrivate_success() {
     // given
     // 테스트에 필요한 유저 ID와 User 객체 생성
     UUID userId1 = UUID.randomUUID();
     UUID userId2 = UUID.randomUUID();
-    User user1 = new User("user1","user1@email.com","user1Pass", null);
-    User user2 = new User("user2","user2@email.com","user2Pass", null);
+    User user1 = new User("user1", "user1@email.com", "user1Pass", null);
+    User user2 = new User("user2", "user2@email.com", "user2Pass", null);
 
     // Private 채널 생성 요청 객체 생성
-    PrivateChannelCreateRequest request = new PrivateChannelCreateRequest(List.of(userId1,userId2));
+    PrivateChannelCreateRequest request =
+        new PrivateChannelCreateRequest(List.of(userId1, userId2));
 
     // 저장될 채널 객체와 참가자 리스트 및 읽음 상태 준비
     Channel savedChannel = new Channel(ChannelType.PRIVATE, "test", "testDes");
     List<User> participants = List.of(user1, user2);
-    List<ReadStatus> readStatuses = List.of(
-        new ReadStatus(participants.get(0), savedChannel, savedChannel.getCreatedAt()),
-        new ReadStatus(participants.get(1), savedChannel, savedChannel.getCreatedAt())
-    );
+    List<ReadStatus> readStatuses =
+        List.of(
+            new ReadStatus(participants.get(0), savedChannel, savedChannel.getCreatedAt()),
+            new ReadStatus(participants.get(1), savedChannel, savedChannel.getCreatedAt()));
 
     // 반환 설정
     given(channelRepository.save(any(Channel.class))).willReturn(savedChannel);
     given(userRepository.findAllById(request.participantIds())).willReturn(participants);
     given(readStatusRepository.saveAll(any())).willReturn(readStatuses);
-    given(channelMapper.toDto(any(Channel.class))).willAnswer(invocation -> {
-      Channel ch = invocation.getArgument(0);
-      return new ChannelDto(ch.getId(),ch.getType(),ch.getName(),ch.getDescription(), null, null);
-    });
+    given(channelMapper.toDto(any(Channel.class)))
+        .willAnswer(
+            invocation -> {
+              Channel ch = invocation.getArgument(0);
+              return new ChannelDto(
+                  ch.getId(), ch.getType(), ch.getName(), ch.getDescription(), null, null);
+            });
 
     // when
     ChannelDto channelDto = basicChannelService.create(request);
@@ -156,10 +157,13 @@ public class BasicChannelServiceTest {
     given(channelRepository.findById(channelId)).willReturn(Optional.of(channel));
 
     PublicChannelUpdateRequest request = new PublicChannelUpdateRequest("newName", "newDesc");
-    given(channelMapper.toDto(channel)).willAnswer(invocation -> {
-      Channel ch = invocation.getArgument(0);
-      return new ChannelDto(ch.getId(), ch.getType(), ch.getName(), ch.getDescription(), null, null);
-    });
+    given(channelMapper.toDto(channel))
+        .willAnswer(
+            invocation -> {
+              Channel ch = invocation.getArgument(0);
+              return new ChannelDto(
+                  ch.getId(), ch.getType(), ch.getName(), ch.getDescription(), null, null);
+            });
 
     // when
     ChannelDto result = basicChannelService.update(channelId, request);
@@ -228,11 +232,11 @@ public class BasicChannelServiceTest {
     // 채널 생성
     Channel channel = new Channel(ChannelType.PUBLIC, "testChannel", "desc");
     ReadStatus readStatus = new ReadStatus(null, channel, null);
-    ChannelDto channelDto = new ChannelDto(null, ChannelType.PUBLIC, "testChannel", "desc", null, null);
+    ChannelDto channelDto =
+        new ChannelDto(null, ChannelType.PUBLIC, "testChannel", "desc", null, null);
 
     // 반환 설정
-    given(readStatusRepository.findAllByUserId(userId))
-        .willReturn(List.of(readStatus));
+    given(readStatusRepository.findAllByUserId(userId)).willReturn(List.of(readStatus));
     given(channelRepository.findAllByTypeOrIdIn(eq(ChannelType.PUBLIC), anyList()))
         .willReturn(List.of(channel));
     given(channelMapper.toDto(channel)).willReturn(channelDto);
@@ -256,8 +260,7 @@ public class BasicChannelServiceTest {
 
     // given
     // 해당 userId에 대한 구독 정보 없음
-    given(readStatusRepository.findAllByUserId(nonExistentUserId))
-        .willReturn(List.of());
+    given(readStatusRepository.findAllByUserId(nonExistentUserId)).willReturn(List.of());
 
     // when
     List<ChannelDto> result = basicChannelService.findAllByUserId(nonExistentUserId);

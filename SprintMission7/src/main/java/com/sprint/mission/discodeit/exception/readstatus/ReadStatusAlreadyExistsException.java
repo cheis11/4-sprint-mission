@@ -6,8 +6,7 @@ import java.util.Map;
 
 public class ReadStatusAlreadyExistsException extends ReadStatusException {
 
-  public ReadStatusAlreadyExistsException(
-      Map<String, Object> details) {
+  public ReadStatusAlreadyExistsException(Map<String, Object> details) {
     super(Instant.now(), ErrorCode.DUPLICATE_READ_STATUS, details);
   }
 }

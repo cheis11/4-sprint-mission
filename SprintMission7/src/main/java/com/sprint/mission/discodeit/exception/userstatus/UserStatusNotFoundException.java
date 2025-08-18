@@ -6,8 +6,7 @@ import java.util.Map;
 
 public class UserStatusNotFoundException extends UserStatusException {
 
-  public UserStatusNotFoundException(
-      Map<String, Object> details) {
+  public UserStatusNotFoundException(Map<String, Object> details) {
     super(Instant.now(), ErrorCode.READ_STATUS_NOT_FOUND, details);
   }
 }
