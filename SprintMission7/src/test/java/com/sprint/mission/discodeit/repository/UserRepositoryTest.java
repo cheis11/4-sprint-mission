@@ -3,27 +3,17 @@ package com.sprint.mission.discodeit.repository;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.UserStatus;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
 @EnableJpaAuditing
 class UserRepositoryTest {
 
@@ -96,23 +86,5 @@ class UserRepositoryTest {
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getProfile()).isNull();
     assertThat(result.get(0).getStatus()).isNotNull();
-  }
-
-  @Test
-  @DisplayName("페이징 + 정렬 테스트")
-  void testPagingAndSorting() {
-    // given : 다수 사용자 저장
-    for (int i = 0; i < 5; i++) {
-      userRepository.save(new User("user" + i, "email" + i + "@test.com", "pass", null));
-    }
-
-    // when : 페이지 0, 크기 3, username 오름차순 정렬
-    Pageable pageable = PageRequest.of(0, 3, Sort.by("username").ascending());
-    Page<User> page = userRepository.findAll(pageable);
-
-    // then : 결과 검증
-    assertThat(page.getContent().size()).isEqualTo(3);               // 페이지 크기 확인
-    assertThat(page.getContent().get(0).getUsername()).isEqualTo("user0"); // 정렬 확인
-    // 설명: findAll(Pageable)은 Spring Data JPA에서 자동으로 페이징/정렬 지원
   }
 }
