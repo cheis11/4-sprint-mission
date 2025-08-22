@@ -9,6 +9,7 @@ import com.sprint.mission.discodeit.dto.request.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.service.UserStatusService;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +96,7 @@ public class UserController implements UserApi {
   @PatchMapping(path = "{userId}/userStatus")
   @Override
   public ResponseEntity<UserStatusDto> updateUserStatusByUserId(
-      @PathVariable("userId") UUID userId, @RequestBody UserStatusUpdateRequest request) {
+      @PathVariable("userId") UUID userId, @Valid @RequestBody UserStatusUpdateRequest request) {
     log.info("[UserController] PATCH /api/users/{}/userStatus started", userId);
     UserStatusDto updatedUserStatus = userStatusService.updateByUserId(userId, request);
     log.info("[UserController] User status updated - userId: {}", userId);

@@ -1,5 +1,7 @@
 package com.sprint.mission.discodeit.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.UserStatus;
@@ -11,14 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DataJpaTest
 @EnableJpaAuditing
 class UserRepositoryTest {
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
   @Test
   @DisplayName("findAllWithProfileAndStatus 성공 - 프로필과 상태가 있는 유저는 조회된다")
