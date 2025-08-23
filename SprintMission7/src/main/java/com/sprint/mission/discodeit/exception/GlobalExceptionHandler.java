@@ -39,25 +39,27 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-    Map<String, Object> errors = ex.getBindingResult().getFieldErrors().stream()
-        .collect(Collectors.toMap(
-            FieldError::getField,
-            FieldError::getDefaultMessage,
-            (existing, replacement) -> existing
-        ));
+  public ResponseEntity<ErrorResponse> handleValidationException(
+      MethodArgumentNotValidException ex) {
+    Map<String, Object> errors =
+        ex.getBindingResult().getFieldErrors().stream()
+            .collect(
+                Collectors.toMap(
+                    FieldError::getField,
+                    FieldError::getDefaultMessage,
+                    (existing, replacement) -> existing));
 
     ValidationFailedException exception = new ValidationFailedException(errors);
 
     HttpStatus status = HttpStatus.BAD_REQUEST;
-    ErrorResponse errorResponse = new ErrorResponse(
-        exception.getTimestamp(),
-        exception.getErrorCode().name(),
-        exception.getErrorCode().getMessage(),
-        exception.getDetails(),
-        exception.getClass().getSimpleName(),
-        status.value()
-    );
+    ErrorResponse errorResponse =
+        new ErrorResponse(
+            exception.getTimestamp(),
+            exception.getErrorCode().name(),
+            exception.getErrorCode().getMessage(),
+            exception.getDetails(),
+            exception.getClass().getSimpleName(),
+            status.value());
 
     return new ResponseEntity<>(errorResponse, status);
   }
@@ -95,7 +97,8 @@ public class GlobalExceptionHandler {
               DUPLICATE_USER_STATUS ->
           HttpStatus.CONFLICT;
 
-      case PRIVATE_CHANNEL_UPDATE, INVALID_USER_ARGUMENT, VALIDATION_FAILED -> HttpStatus.BAD_REQUEST;
+      case PRIVATE_CHANNEL_UPDATE, INVALID_USER_ARGUMENT, VALIDATION_FAILED ->
+          HttpStatus.BAD_REQUEST;
 
       default -> HttpStatus.INTERNAL_SERVER_ERROR;
     };

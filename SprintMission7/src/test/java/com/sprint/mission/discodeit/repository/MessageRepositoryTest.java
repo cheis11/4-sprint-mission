@@ -1,5 +1,7 @@
 package com.sprint.mission.discodeit.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Message;
@@ -17,20 +19,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DataJpaTest
 @EnableJpaAuditing
 public class MessageRepositoryTest {
 
-  @Autowired
-  private MessageRepository messageRepository;
+  @Autowired private MessageRepository messageRepository;
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-  @Autowired
-  private ChannelRepository channelRepository;
+  @Autowired private ChannelRepository channelRepository;
 
   @Test
   @DisplayName("findAllByChannelIdWithAuthor - 성공 케이스")
@@ -40,15 +37,17 @@ public class MessageRepositoryTest {
     new UserStatus(testUser, Instant.now()); // UserStatus와 연결
     userRepository.save(testUser);
 
-    Channel testChannel = new Channel(ChannelType.PUBLIC, "testChannel", "Test channel description");
+    Channel testChannel =
+        new Channel(ChannelType.PUBLIC, "testChannel", "Test channel description");
     channelRepository.save(testChannel);
 
     Message message = new Message("Hello", testChannel, testUser, new ArrayList<>());
     messageRepository.save(message);
 
     // when
-    Slice<Message> messages = messageRepository.findAllByChannelIdWithAuthor(
-        testChannel.getId(), Instant.now().plusSeconds(10), PageRequest.of(0, 10));
+    Slice<Message> messages =
+        messageRepository.findAllByChannelIdWithAuthor(
+            testChannel.getId(), Instant.now().plusSeconds(10), PageRequest.of(0, 10));
 
     // then
     // 메시지가 정상적으로 조회되는지 확인
@@ -63,8 +62,9 @@ public class MessageRepositoryTest {
     // 아무 데이터도 만들지 않고 임의의 채널 ID 사용
 
     // when
-    Slice<Message> messages = messageRepository.findAllByChannelIdWithAuthor(
-        UUID.randomUUID(), Instant.now().plusSeconds(10), PageRequest.of(0, 10));
+    Slice<Message> messages =
+        messageRepository.findAllByChannelIdWithAuthor(
+            UUID.randomUUID(), Instant.now().plusSeconds(10), PageRequest.of(0, 10));
 
     // then
     // 결과는 비어있어야 함
@@ -86,7 +86,8 @@ public class MessageRepositoryTest {
     messageRepository.save(message);
 
     // when
-    Optional<Instant> lastMessageAt = messageRepository.findLastMessageAtByChannelId(testChannel.getId());
+    Optional<Instant> lastMessageAt =
+        messageRepository.findLastMessageAtByChannelId(testChannel.getId());
 
     // then
     assertThat(lastMessageAt).isPresent();
@@ -99,7 +100,8 @@ public class MessageRepositoryTest {
     // 데이터 없이 임의의 채널 ID 사용
 
     // when
-    Optional<Instant> lastMessageAt = messageRepository.findLastMessageAtByChannelId(UUID.randomUUID());
+    Optional<Instant> lastMessageAt =
+        messageRepository.findLastMessageAtByChannelId(UUID.randomUUID());
 
     // then
     assertThat(lastMessageAt).isNotPresent();

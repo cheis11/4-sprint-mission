@@ -1,30 +1,27 @@
 package com.sprint.mission.discodeit.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.sprint.mission.discodeit.dto.data.ChannelDto;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelUpdateRequest;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.service.ChannelService;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SpringBootTest
 @Transactional
 class ChannelIntegrationTest {
 
-  @Autowired
-  private ChannelService channelService;
+  @Autowired private ChannelService channelService;
 
-  @Autowired
-  private ChannelRepository channelRepository;
+  @Autowired private ChannelRepository channelRepository;
 
   @Test
   @DisplayName("Public Channel 생성 성공")
@@ -45,8 +42,8 @@ class ChannelIntegrationTest {
   @DisplayName("Public Channel 수정 성공")
   void updateChannel_success() {
     // given
-    ChannelDto createdChannel = channelService.create(
-        new PublicChannelCreateRequest("general", "Main channel"));
+    ChannelDto createdChannel =
+        channelService.create(new PublicChannelCreateRequest("general", "Main channel"));
 
     // when
     PublicChannelUpdateRequest updateRequest =
@@ -62,8 +59,8 @@ class ChannelIntegrationTest {
   @DisplayName("Channel 삭제 성공")
   void deleteChannel_success() {
     // given
-    ChannelDto createdChannel = channelService.create(
-        new PublicChannelCreateRequest("general", "Main channel"));
+    ChannelDto createdChannel =
+        channelService.create(new PublicChannelCreateRequest("general", "Main channel"));
     UUID channelId = createdChannel.id();
 
     // when
@@ -77,15 +74,14 @@ class ChannelIntegrationTest {
   @DisplayName("UserId 기반 채널 조회 (Public 포함)")
   void findAllByUserId_success() {
     // given
-    ChannelDto publicChannel = channelService.create(
-        new PublicChannelCreateRequest("general", "Main channel"));
+    ChannelDto publicChannel =
+        channelService.create(new PublicChannelCreateRequest("general", "Main channel"));
 
     // when
     List<ChannelDto> channels = channelService.findAllByUserId(UUID.randomUUID());
 
     // then
     assertThat(channels).isNotEmpty();
-    assertThat(channels.stream().map(ChannelDto::name))
-        .contains(publicChannel.name());
+    assertThat(channels.stream().map(ChannelDto::name)).contains(publicChannel.name());
   }
 }

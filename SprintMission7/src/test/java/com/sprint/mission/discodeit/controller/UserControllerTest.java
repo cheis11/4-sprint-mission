@@ -1,8 +1,8 @@
 package com.sprint.mission.discodeit.controller;
 
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.BDDMockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprint.mission.discodeit.dto.data.UserDto;
@@ -28,17 +28,13 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper om;
+  @Autowired private ObjectMapper om;
 
-  @MockitoBean
-  private UserService userService;
+  @MockitoBean private UserService userService;
 
-  @MockitoBean
-  private UserStatusService userStatusService;
+  @MockitoBean private UserStatusService userStatusService;
 
   @Test
   @DisplayName("POST /api/users - 성공 케이스")
@@ -54,28 +50,24 @@ public class UserControllerTest {
     given(userService.create(request, Optional.empty())).willReturn(userDto);
 
     // JSON part 생성
-    MockMultipartFile jsonPart = new MockMultipartFile(
-        "userCreateRequest",
-        "userCreateRequest.json",
-        MediaType.APPLICATION_JSON_VALUE,
-        om.writeValueAsBytes(request)
-    );
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "userCreateRequest",
+            "userCreateRequest.json",
+            MediaType.APPLICATION_JSON_VALUE,
+            om.writeValueAsBytes(request));
 
     // profile 파일 part (선택, 비워도 됨)
-    MockMultipartFile profilePart = new MockMultipartFile(
-        "profile",
-        "profile.png",
-        MediaType.IMAGE_PNG_VALUE,
-        new byte[0]
-    );
+    MockMultipartFile profilePart =
+        new MockMultipartFile("profile", "profile.png", MediaType.IMAGE_PNG_VALUE, new byte[0]);
 
     // when & then
-    mockMvc.perform(
+    mockMvc
+        .perform(
             multipart("/api/users")
                 .file(jsonPart)
                 .file(profilePart)
-                .accept(MediaType.APPLICATION_JSON)
-        )
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated());
   }
 
@@ -85,25 +77,31 @@ public class UserControllerTest {
     // given
     UUID userId = UUID.randomUUID();
     UserDto updatedUser = new UserDto(userId, "kim_updated", "kim@test.com", null, true);
-    UserUpdateRequest updateRequest = new UserUpdateRequest("kim_updated", "kim@test.com", "newPass");
+    UserUpdateRequest updateRequest =
+        new UserUpdateRequest("kim_updated", "kim@test.com", "newPass");
 
     given(userService.update(userId, updateRequest, Optional.empty())).willReturn(updatedUser);
 
-    MockMultipartFile jsonPart = new MockMultipartFile(
-        "userUpdateRequest", "", "application/json", om.writeValueAsBytes(updateRequest));
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "userUpdateRequest", "", "application/json", om.writeValueAsBytes(updateRequest));
 
-    MockMultipartFile profilePart = new MockMultipartFile(
-        "profile", "", MediaType.IMAGE_PNG_VALUE, new byte[0]);
+    MockMultipartFile profilePart =
+        new MockMultipartFile("profile", "", MediaType.IMAGE_PNG_VALUE, new byte[0]);
 
     // when & then
-    mockMvc.perform(
+    mockMvc
+        .perform(
             multipart("/api/users/" + userId)
                 .file(jsonPart)
                 .file(profilePart)
-                .with(request -> { request.setMethod("PATCH"); return request; }) // multipart patch hack
+                .with(
+                    request -> {
+                      request.setMethod("PATCH");
+                      return request;
+                    }) // multipart patch hack
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .accept(MediaType.APPLICATION_JSON)
-        )
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(userId.toString()))
         .andExpect(jsonPath("$.username").value("kim_updated"));
@@ -117,8 +115,7 @@ public class UserControllerTest {
     willDoNothing().given(userService).delete(userId);
 
     // when & then
-    mockMvc.perform(delete("/api/users/" + userId))
-        .andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/users/" + userId)).andExpect(status().isNoContent());
   }
 
   @Test
@@ -130,7 +127,8 @@ public class UserControllerTest {
     given(userService.findAll()).willReturn(List.of(userDto));
 
     // when & then
-    mockMvc.perform(get("/api/users").accept(MediaType.APPLICATION_JSON))
+    mockMvc
+        .perform(get("/api/users").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].id").value(userId.toString()))
         .andExpect(jsonPath("$[0].username").value("kim"));
@@ -150,12 +148,12 @@ public class UserControllerTest {
     String body = om.writeValueAsString(request);
 
     // when & then
-    mockMvc.perform(
+    mockMvc
+        .perform(
             patch("/api/users/" + userId + "/userStatus")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
-                .accept(MediaType.APPLICATION_JSON)
-        )
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(statusDto.id().toString()))
         .andExpect(jsonPath("$.userId").value(userId.toString()))
@@ -168,16 +166,17 @@ public class UserControllerTest {
     // given: 잘못된 요청 (username이 null)
     UserCreateRequest badRequest = new UserCreateRequest(null, "invalid@test.com", "pass123");
 
-    MockMultipartFile jsonPart = new MockMultipartFile(
-        "userCreateRequest", "", "application/json", om.writeValueAsBytes(badRequest));
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "userCreateRequest", "", "application/json", om.writeValueAsBytes(badRequest));
 
     // when & then
-    mockMvc.perform(
+    mockMvc
+        .perform(
             multipart("/api/users")
                 .file(jsonPart)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .accept(MediaType.APPLICATION_JSON)
-        )
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
 
@@ -187,19 +186,25 @@ public class UserControllerTest {
     // given
     UUID userId = UUID.randomUUID();
     UserUpdateRequest updateRequest = new UserUpdateRequest("noname", "no@test.com", "pass");
-    given(userService.update(eq(userId), eq(updateRequest), any())).willThrow(new RuntimeException("User not found"));
+    given(userService.update(eq(userId), eq(updateRequest), any()))
+        .willThrow(new RuntimeException("User not found"));
 
-    MockMultipartFile jsonPart = new MockMultipartFile(
-        "userUpdateRequest", "", "application/json", om.writeValueAsBytes(updateRequest));
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "userUpdateRequest", "", "application/json", om.writeValueAsBytes(updateRequest));
 
     // when & then
-    mockMvc.perform(
+    mockMvc
+        .perform(
             multipart("/api/users/" + userId)
                 .file(jsonPart)
-                .with(req -> { req.setMethod("PATCH"); return req; })
+                .with(
+                    req -> {
+                      req.setMethod("PATCH");
+                      return req;
+                    })
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .accept(MediaType.APPLICATION_JSON)
-        )
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError()); // 예외 전파
   }
 
@@ -211,8 +216,7 @@ public class UserControllerTest {
     willThrow(new RuntimeException("User not found")).given(userService).delete(userId);
 
     // when & then
-    mockMvc.perform(delete("/api/users/" + userId))
-        .andExpect(status().isInternalServerError());
+    mockMvc.perform(delete("/api/users/" + userId)).andExpect(status().isInternalServerError());
   }
 
   @Test
@@ -226,12 +230,12 @@ public class UserControllerTest {
         """;
 
     // when & then
-    mockMvc.perform(
+    mockMvc
+        .perform(
             patch("/api/users/" + UUID.randomUUID() + "/userStatus")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
-                .accept(MediaType.APPLICATION_JSON)
-        )
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.details").exists()); // 에러 응답에 errors 필드가 포함되었는지 확인
   }
@@ -250,13 +254,12 @@ public class UserControllerTest {
     String body = om.writeValueAsString(request);
 
     // when & then
-    mockMvc.perform(
+    mockMvc
+        .perform(
             patch("/api/users/" + userId + "/userStatus")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
-                .accept(MediaType.APPLICATION_JSON)
-        )
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
   }
-
 }
