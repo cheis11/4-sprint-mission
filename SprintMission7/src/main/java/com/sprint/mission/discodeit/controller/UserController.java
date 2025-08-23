@@ -7,10 +7,13 @@ import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
+import com.sprint.mission.discodeit.exception.user.ValidationFailedException;
 import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.service.UserStatusService;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +44,7 @@ public class UserController implements UserApi {
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @Override
   public ResponseEntity<UserDto> create(
-      @RequestPart("userCreateRequest") UserCreateRequest userCreateRequest,
+      @Valid @RequestPart("userCreateRequest") UserCreateRequest userCreateRequest,
       @RequestPart(value = "profile", required = false) MultipartFile profile) {
     log.info(
         "[UserController] POST /api/users started - username: {}, profile uploaded: {},",
@@ -95,7 +98,7 @@ public class UserController implements UserApi {
   @PatchMapping(path = "{userId}/userStatus")
   @Override
   public ResponseEntity<UserStatusDto> updateUserStatusByUserId(
-      @PathVariable("userId") UUID userId, @RequestBody UserStatusUpdateRequest request) {
+      @PathVariable("userId") UUID userId, @Valid @RequestBody UserStatusUpdateRequest request) {
     log.info("[UserController] PATCH /api/users/{}/userStatus started", userId);
     UserStatusDto updatedUserStatus = userStatusService.updateByUserId(userId, request);
     log.info("[UserController] User status updated - userId: {}", userId);
