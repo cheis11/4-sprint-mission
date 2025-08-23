@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,14 +33,18 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, status);
   }
 
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<Void> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    return ResponseEntity.badRequest().build(); // 400
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-    // 필드별 오류를 Map<String, Object>로 변환
     Map<String, Object> errors = ex.getBindingResult().getFieldErrors().stream()
         .collect(Collectors.toMap(
             FieldError::getField,
             FieldError::getDefaultMessage,
-            (existing, replacement) -> existing // 동일 필드 중복 시 첫 번째 메시지 유지
+            (existing, replacement) -> existing
         ));
 
     ValidationFailedException exception = new ValidationFailedException(errors);
