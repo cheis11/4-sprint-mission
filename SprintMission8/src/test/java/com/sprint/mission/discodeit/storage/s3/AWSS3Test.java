@@ -1,13 +1,8 @@
 package com.sprint.mission.discodeit.storage.s3;
 
-import com.sprint.mission.discodeit.aws.AwsProperties;
 import com.sprint.mission.discodeit.dto.response.FileResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.mock.web.MockMultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -28,14 +23,7 @@ import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = "spring.profiles.active=test")
 public class AWSS3Test {
-
-  @Autowired
-  private AwsProperties props;
-
-  @Autowired
-  private S3Client s3Client;
 
   private static final Properties envProps = new Properties();
 
@@ -47,42 +35,42 @@ public class AWSS3Test {
     }
   }
 
-  @DynamicPropertySource
-  static void registerS3Properties(DynamicPropertyRegistry registry) {
-    registry.add("aws.region", () -> envProps.getProperty("AWS_REGION"));
-    registry.add("aws.credentials.accessKey", () -> envProps.getProperty("AWS_ACCESS_KEY_ID"));
-    registry.add("aws.credentials.secretKey", () -> envProps.getProperty("AWS_SECRET_ACCESS_KEY"));
-    registry.add("aws.s3.bucket", () -> envProps.getProperty("S3_BUCKET_NAME"));
-  }
+  private final String bucket = envProps.getProperty("S3_BUCKET_NAME");
+  private final String region = envProps.getProperty("AWS_REGION");
+  private final S3Client s3Client = S3Client.builder()
+      .region(Region.of(region))
+      .credentialsProvider(StaticCredentialsProvider.create(
+          AwsBasicCredentials.create(
+              envProps.getProperty("AWS_ACCESS_KEY_ID"),
+              envProps.getProperty("AWS_SECRET_ACCESS_KEY")
+          )
+      ))
+      .build();
 
-  // ===================== 업로드 테스트 =====================
   @Test
   @DisplayName("S3 업로드 테스트")
   void uploadTest() throws Exception {
     MockMultipartFile mockFile =
         new MockMultipartFile("file", "hello.txt", "text/plain", "Hello S3".getBytes());
 
-    // 테스트용 고정 key
     String key = "images/sample.txt";
 
     PutObjectRequest putReq = PutObjectRequest.builder()
-        .bucket(props.getS3().getBucket())
+        .bucket(bucket)
         .key(key)
         .contentType(mockFile.getContentType())
         .build();
 
-    s3Client.putObject(putReq,
-        RequestBody.fromInputStream(mockFile.getInputStream(), mockFile.getSize()));
+    s3Client.putObject(putReq, RequestBody.fromInputStream(mockFile.getInputStream(), mockFile.getSize()));
 
     HeadObjectResponse head = s3Client.headObject(
-        HeadObjectRequest.builder().bucket(props.getS3().getBucket()).key(key).build());
+        HeadObjectRequest.builder().bucket(bucket).key(key).build()
+    );
 
     assertThat(head).isNotNull();
-    System.out.println("Upload Success! Public URL = " +
-        buildPublicUrl(props.getS3().getBucket(), props.getRegion(), key));
+    System.out.println("Upload Success! Public URL = " + buildPublicUrl(bucket, region, key));
   }
 
-  // ===================== 다운로드 테스트 =====================
   @Test
   @DisplayName("S3 다운로드 테스트")
   void listFilesTest() {
@@ -91,17 +79,17 @@ public class AWSS3Test {
     files.forEach(f -> System.out.println(f.url() + " (" + f.size() + " bytes)"));
   }
 
-  // ===================== Presigned URL 테스트 =====================
   @Test
   @DisplayName("S3 Presigned URL 생성 테스트")
   void presignedUrlTest() throws Exception {
-    // Presigned URL 테스트용으로 먼저 업로드
+    // Presigned URL 테스트용 업로드
     MockMultipartFile mockFile =
         new MockMultipartFile("file", "hello.txt", "text/plain", "Hello S3".getBytes());
     String key = "images/sample.txt";
+
     s3Client.putObject(
         PutObjectRequest.builder()
-            .bucket(props.getS3().getBucket())
+            .bucket(bucket)
             .key(key)
             .contentType(mockFile.getContentType())
             .build(),
@@ -110,16 +98,17 @@ public class AWSS3Test {
 
     // Presigner 생성
     S3Presigner presigner = S3Presigner.builder()
-        .region(Region.of(props.getRegion()))
+        .region(Region.of(region))
         .credentialsProvider(StaticCredentialsProvider.create(
             AwsBasicCredentials.create(
                 envProps.getProperty("AWS_ACCESS_KEY_ID"),
                 envProps.getProperty("AWS_SECRET_ACCESS_KEY")
-            )))
+            )
+        ))
         .build();
 
     GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-        .bucket(props.getS3().getBucket())
+        .bucket(bucket)
         .key(key)
         .build();
 
@@ -134,7 +123,6 @@ public class AWSS3Test {
     assertThat(presignedUrl).isNotBlank();
   }
 
-  // ===================== 유틸 메서드 =====================
   private String buildPublicUrl(String bucket, String region, String key) {
     String encodedKey = URLEncoder.encode(key, StandardCharsets.UTF_8).replace("+", "%20");
     if (region == null || region.isBlank() || "us-east-1".equals(region)) {
@@ -144,8 +132,6 @@ public class AWSS3Test {
   }
 
   public List<FileResponseDto> list(String prefix, int maxKeys) {
-    String bucket = props.getS3().getBucket();
-
     ListObjectsV2Request req = ListObjectsV2Request.builder()
         .bucket(bucket)
         .prefix(prefix == null ? "" : prefix)
@@ -158,7 +144,7 @@ public class AWSS3Test {
         .filter(o -> !o.key().endsWith("/"))
         .map(o -> new FileResponseDto(
             o.key(),
-            buildPublicUrl(bucket, props.getRegion(), o.key()),
+            buildPublicUrl(bucket, region, o.key()),
             o.size(),
             o.lastModified()
         ))
@@ -166,10 +152,6 @@ public class AWSS3Test {
   }
 
   public String toPublicUrl(String key) {
-    return buildPublicUrl(props.getS3().getBucket(), props.getRegion(), key);
-  }
-
-  public AwsProperties getProps() {
-    return props;
+    return buildPublicUrl(bucket, region, key);
   }
 }
