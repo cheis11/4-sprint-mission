@@ -1,4 +1,4 @@
-package com.sprint.mission.discodeit.controller;
+package com.sprint.mission.discodeit.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

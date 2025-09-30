@@ -25,3 +25,6 @@ management:
   info:
     env:
       enabled: true
+mail:
+  address:
+    admin: admin@email.com
