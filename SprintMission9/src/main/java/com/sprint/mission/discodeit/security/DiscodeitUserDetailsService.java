@@ -24,13 +24,13 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
   private final UserMapper userMapper;
 
   @Override
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    Optional<User> optionalUser = userRepository.findByEmail(email);
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    Optional<User> optionalUser = userRepository.findByUsername(username);
     User findUser = optionalUser.orElseThrow(UserNotFoundException::new);
 
     UserDto userDto = userMapper.toDto(findUser);
     Collection<? extends GrantedAuthority> authorities =
-        authorityUtils.createAuthorities(findUser.getEmail());
+        authorityUtils.createAuthorities(findUser.getUsername());
 
     return new DiscodeitUserDetails(userDto, findUser.getPassword(), authorities);
   }
