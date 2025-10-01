@@ -13,7 +13,7 @@ public class DiscodeitUserDetails implements UserDetails {
 
   private final UserDto userDto;
   private final String password;
-  private final Collection<? extends GrantedAuthority> authorities;
+  private final DiscodeitAuthorityUtils authorityUtils;
 
   @Override
   public String getUsername() {
@@ -22,7 +22,7 @@ public class DiscodeitUserDetails implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return authorities;
+    return authorityUtils.createAuthorities(userDto.username());
   }
 
   @Override

@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 public class DiscodeitUserDetailsService implements UserDetailsService {
 
   private final UserRepository userRepository;
-  private final DiscodeitAuthorityUtils authorityUtils;
   private final UserMapper userMapper;
+  private final DiscodeitAuthorityUtils authorityUtils;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -32,6 +32,6 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
     Collection<? extends GrantedAuthority> authorities =
         authorityUtils.createAuthorities(findUser.getUsername());
 
-    return new DiscodeitUserDetails(userDto, findUser.getPassword(), authorities);
+    return new DiscodeitUserDetails(userDto, findUser.getPassword(), authorityUtils);
   }
 }
