@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.exception;
 
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -63,6 +65,25 @@ public class GlobalExceptionHandler {
         .body(response);
   }
 
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+    log.warn("권한 없음 발생: {}", e.getMessage(), e);
+
+    ErrorResponse response = new ErrorResponse(
+        Instant.now(),
+        "SECURITY_ACCESS_DENIED",       // ErrorCode로 정의해도 됨
+        "권한이 없습니다.",
+        null,
+        e.getClass().getSimpleName(),
+        HttpStatus.FORBIDDEN.value()
+    );
+
+    return ResponseEntity
+        .status(HttpStatus.FORBIDDEN)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(response);
+  }
+
   private HttpStatus determineHttpStatus(DiscodeitException exception) {
     ErrorCode errorCode = exception.getErrorCode();
     return switch (errorCode) {
@@ -72,6 +93,7 @@ public class GlobalExceptionHandler {
       case INVALID_USER_CREDENTIALS -> HttpStatus.UNAUTHORIZED;
       case PRIVATE_CHANNEL_UPDATE, INVALID_REQUEST -> HttpStatus.BAD_REQUEST;
       case INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
+      case SECURITY_ACCESS_DENIED ->  HttpStatus.FORBIDDEN;
     };
   }
 }

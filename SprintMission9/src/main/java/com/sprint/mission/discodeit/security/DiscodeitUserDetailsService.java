@@ -29,8 +29,6 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
     User findUser = optionalUser.orElseThrow(UserNotFoundException::new);
 
     UserDto userDto = userMapper.toDto(findUser);
-    Collection<? extends GrantedAuthority> authorities =
-        authorityUtils.createAuthorities(findUser.getUsername());
 
     return new DiscodeitUserDetails(userDto, findUser.getPassword(), authorityUtils);
   }

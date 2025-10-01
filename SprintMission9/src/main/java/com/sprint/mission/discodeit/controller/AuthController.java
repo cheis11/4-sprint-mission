@@ -36,10 +36,15 @@ public class AuthController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal DiscodeitUserDetails discodeitUserDetails) {
-    UserDto userDto = discodeitUserDetails.getUserDto();
-    return ResponseEntity.ok(userDto);
+  public ResponseEntity<UserDto> getCurrentUser(
+      @AuthenticationPrincipal DiscodeitUserDetails discodeitUserDetails) {
+
+    if (discodeitUserDetails == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    return ResponseEntity.ok(discodeitUserDetails.getUserDto());
   }
+
 
   @PutMapping("/role")
   public ResponseEntity<UserDto> RoleUpdateRequest(@RequestBody RoleUpdateRequest roleUpdateRequest){

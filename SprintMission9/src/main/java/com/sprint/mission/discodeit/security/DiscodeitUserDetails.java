@@ -5,6 +5,7 @@ import java.util.Collection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
@@ -22,7 +23,9 @@ public class DiscodeitUserDetails implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return authorityUtils.createAuthorities(userDto.username());
+    Collection<? extends GrantedAuthority> authorities = authorityUtils.createAuthorities(userDto);
+    System.out.println("DEBUG: User " + userDto.username() + " authorities = " + authorities);
+    return authorities != null ? authorities : AuthorityUtils.createAuthorityList();
   }
 
   @Override

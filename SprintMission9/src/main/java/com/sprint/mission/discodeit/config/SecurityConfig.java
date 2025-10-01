@@ -1,28 +1,24 @@
 package com.sprint.mission.discodeit.config;
 
-import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.security.LoginFailureHandler;
 import com.sprint.mission.discodeit.security.LoginSuccessHandler;
-import com.sprint.mission.discodeit.security.Role;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -35,6 +31,8 @@ import org.springframework.util.StringUtils;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
+@Slf4j
 public class SecurityConfig {
 
   @Bean
@@ -51,8 +49,11 @@ public class SecurityConfig {
             .failureHandler(loginFailureHandler)
         )
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/me").authenticated()
-            .anyRequest().permitAll()
+            .requestMatchers("/", "/index.html", "/assets/**", "favicon.ico", "/api/auth/csrf-token").permitAll()
+            .requestMatchers("/api/users").permitAll()
+            .requestMatchers("/api/auth/login").permitAll()
+            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "actuator/**").permitAll()
+            .anyRequest().authenticated()
         )
         .logout(logout -> logout
             .logoutUrl("/api/auth/logout")
@@ -62,9 +63,11 @@ public class SecurityConfig {
         )
         .exceptionHandling(ex -> ex
             .authenticationEntryPoint((request, response, authException) -> {
-              // 세션 무효화
               request.getSession().invalidate();
               response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            })
+            .accessDeniedHandler((request, response, accessDeniedException) -> {
+              response.setStatus(HttpStatus.FORBIDDEN.value());
             })
         );
     return http.build();
@@ -74,6 +77,25 @@ public class SecurityConfig {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
+  @Bean
+  public RoleHierarchy roleHierarchy() {
+    RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
+
+    hierarchy.setHierarchy("ROLE_ADMIN > ROLE_CHANNEL_MANAGER\n" +
+        "ROLE_CHANNEL_MANAGER > ROLE_USER");
+
+    return hierarchy;
+  }
+
+  @Bean
+  static MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+      RoleHierarchy roleHierarchy) {
+    DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+    handler.setRoleHierarchy(roleHierarchy);
+    return handler;
+  }
+
 }
 
 final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
