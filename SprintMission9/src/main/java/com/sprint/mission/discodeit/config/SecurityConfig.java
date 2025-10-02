@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.config;
 
+import com.sprint.mission.discodeit.security.DiscodeitUserDetailsService;
 import com.sprint.mission.discodeit.security.LoginFailureHandler;
 import com.sprint.mission.discodeit.security.LoginSuccessHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +39,8 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class SecurityConfig {
 
+  private final DiscodeitUserDetailsService userDetailsService;
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler,
       LoginFailureHandler loginFailureHandler) throws Exception{
@@ -51,6 +54,11 @@ public class SecurityConfig {
             .successHandler(loginSuccessHandler)
             .failureHandler(loginFailureHandler)
         )
+        .rememberMe(remember -> remember
+            .key("my-remember-key")
+            .tokenValiditySeconds(7 * 24 * 60 * 60)
+            .rememberMeParameter("remember-me")
+            .userDetailsService(userDetailsService))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/index.html", "/assets/**", "favicon.ico", "/api/auth/csrf-token").permitAll()
             .requestMatchers("/api/users").permitAll()
