@@ -42,50 +42,68 @@ public class SecurityConfig {
   private final DiscodeitUserDetailsService userDetailsService;
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler,
-      LoginFailureHandler loginFailureHandler) throws Exception{
-    http
-        .csrf(csrf -> csrf
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
-        )
-        .formLogin(login -> login
-            .loginProcessingUrl("/api/auth/login")
-            .successHandler(loginSuccessHandler)
-            .failureHandler(loginFailureHandler)
-        )
-        .rememberMe(remember -> remember
-            .key("my-remember-key")
-            .tokenValiditySeconds(7 * 24 * 60 * 60)
-            .rememberMeParameter("remember-me")
-            .userDetailsService(userDetailsService))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/index.html", "/assets/**", "favicon.ico", "/api/auth/csrf-token").permitAll()
-            .requestMatchers("/api/users").permitAll()
-            .requestMatchers("/api/auth/login").permitAll()
-            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "actuator/**").permitAll()
-            .anyRequest().authenticated()
-        )
-        .sessionManagement(management -> management
-            .sessionConcurrency(concurrency -> concurrency
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(false)
-                .sessionRegistry(sessionRegistry())))
-        .logout(logout -> logout
-            .logoutUrl("/api/auth/logout")
-            .invalidateHttpSession(true)
-            .deleteCookies("JSESSIONID")
-            .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
-        )
-        .exceptionHandling(ex -> ex
-            .authenticationEntryPoint((request, response, authException) -> {
-              request.getSession().invalidate();
-              response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            })
-            .accessDeniedHandler((request, response, accessDeniedException) -> {
-              response.setStatus(HttpStatus.FORBIDDEN.value());
-            })
-        );
+  public SecurityFilterChain filterChain(
+      HttpSecurity http,
+      LoginSuccessHandler loginSuccessHandler,
+      LoginFailureHandler loginFailureHandler)
+      throws Exception {
+    http.csrf(
+            csrf ->
+                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
+        .formLogin(
+            login ->
+                login
+                    .loginProcessingUrl("/api/auth/login")
+                    .successHandler(loginSuccessHandler)
+                    .failureHandler(loginFailureHandler))
+        .rememberMe(
+            remember ->
+                remember
+                    .key("my-remember-key")
+                    .tokenValiditySeconds(7 * 24 * 60 * 60)
+                    .rememberMeParameter("remember-me")
+                    .userDetailsService(userDetailsService))
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(
+                        "/", "/index.html", "/assets/**", "favicon.ico", "/api/auth/csrf-token")
+                    .permitAll()
+                    .requestMatchers("/api/users")
+                    .permitAll()
+                    .requestMatchers("/api/auth/login")
+                    .permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "actuator/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
+        .sessionManagement(
+            management ->
+                management.sessionConcurrency(
+                    concurrency ->
+                        concurrency
+                            .maximumSessions(1)
+                            .maxSessionsPreventsLogin(false)
+                            .sessionRegistry(sessionRegistry())))
+        .logout(
+            logout ->
+                logout
+                    .logoutUrl("/api/auth/logout")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                    .logoutSuccessHandler(
+                        new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT)))
+        .exceptionHandling(
+            ex ->
+                ex.authenticationEntryPoint(
+                        (request, response, authException) -> {
+                          request.getSession().invalidate();
+                          response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                        })
+                    .accessDeniedHandler(
+                        (request, response, accessDeniedException) -> {
+                          response.setStatus(HttpStatus.FORBIDDEN.value());
+                        }));
     return http.build();
   }
 
@@ -98,8 +116,8 @@ public class SecurityConfig {
   public RoleHierarchy roleHierarchy() {
     RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
 
-    hierarchy.setHierarchy("ROLE_ADMIN > ROLE_CHANNEL_MANAGER\n" +
-        "ROLE_CHANNEL_MANAGER > ROLE_USER");
+    hierarchy.setHierarchy(
+        "ROLE_ADMIN > ROLE_CHANNEL_MANAGER\n" + "ROLE_CHANNEL_MANAGER > ROLE_USER");
 
     return hierarchy;
   }
@@ -128,7 +146,8 @@ final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
   private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
 
   @Override
-  public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
+  public void handle(
+      HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
     /*
      * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection of
      * the CsrfToken when it is rendered in the response body.
@@ -154,7 +173,7 @@ final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
      * when a server-side rendered form includes the _csrf request parameter as a
      * hidden input.
      */
-    return (StringUtils.hasText(headerValue) ? this.plain : this.xor).resolveCsrfTokenValue(request, csrfToken);
+    return (StringUtils.hasText(headerValue) ? this.plain : this.xor)
+        .resolveCsrfTokenValue(request, csrfToken);
   }
 }
-

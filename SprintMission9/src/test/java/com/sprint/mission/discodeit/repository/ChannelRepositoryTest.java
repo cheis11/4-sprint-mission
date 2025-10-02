@@ -15,23 +15,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
-/**
- * ChannelRepository 슬라이스 테스트
- */
+/** ChannelRepository 슬라이스 테스트 */
 @DataJpaTest
 @EnableJpaAuditing
 @ActiveProfiles("test")
 class ChannelRepositoryTest {
 
-  @Autowired
-  private ChannelRepository channelRepository;
+  @Autowired private ChannelRepository channelRepository;
 
-  @Autowired
-  private TestEntityManager entityManager;
+  @Autowired private TestEntityManager entityManager;
 
-  /**
-   * TestFixture: 채널 생성용 테스트 픽스처
-   */
+  /** TestFixture: 채널 생성용 테스트 픽스처 */
   private Channel createTestChannel(ChannelType type, String name) {
     Channel channel = new Channel(type, name, "설명: " + name);
     return channelRepository.save(channel);
@@ -55,20 +49,19 @@ class ChannelRepositoryTest {
 
     // when
     List<UUID> selectedPrivateIds = List.of(privateChannel1.getId());
-    List<Channel> foundChannels = channelRepository.findAllByTypeOrIdIn(ChannelType.PUBLIC,
-        selectedPrivateIds);
+    List<Channel> foundChannels =
+        channelRepository.findAllByTypeOrIdIn(ChannelType.PUBLIC, selectedPrivateIds);
 
     // then
     assertThat(foundChannels).hasSize(3); // 공개채널 2개 + 선택된 비공개채널 1개
 
     // 공개 채널 2개가 모두 포함되어 있는지 확인
-    assertThat(
-        foundChannels.stream().filter(c -> c.getType() == ChannelType.PUBLIC).count()).isEqualTo(2);
+    assertThat(foundChannels.stream().filter(c -> c.getType() == ChannelType.PUBLIC).count())
+        .isEqualTo(2);
 
     // 선택된 비공개 채널만 포함되어 있는지 확인
-    List<Channel> privateChannels = foundChannels.stream()
-        .filter(c -> c.getType() == ChannelType.PRIVATE)
-        .toList();
+    List<Channel> privateChannels =
+        foundChannels.stream().filter(c -> c.getType() == ChannelType.PRIVATE).toList();
     assertThat(privateChannels).hasSize(1);
     assertThat(privateChannels.get(0).getId()).isEqualTo(privateChannel1.getId());
   }
@@ -87,10 +80,10 @@ class ChannelRepositoryTest {
     entityManager.clear();
 
     // when
-    List<Channel> foundChannels = channelRepository.findAllByTypeOrIdIn(ChannelType.PUBLIC,
-        List.of());
+    List<Channel> foundChannels =
+        channelRepository.findAllByTypeOrIdIn(ChannelType.PUBLIC, List.of());
 
     // then
     assertThat(foundChannels).isEmpty();
   }
-} 
+}

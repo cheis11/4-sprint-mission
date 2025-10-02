@@ -29,14 +29,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(MockitoExtension.class)
 class BasicUserServiceTest {
 
-  @Mock
-  private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @Mock
-  private UserMapper userMapper;
+  @Mock private UserMapper userMapper;
 
-  @InjectMocks
-  private BasicUserService userService;
+  @InjectMocks private BasicUserService userService;
 
   private UUID userId;
   private String username;
@@ -120,8 +117,7 @@ class BasicUserServiceTest {
     given(userRepository.findById(eq(userId))).willReturn(Optional.empty());
 
     // when & then
-    assertThatThrownBy(() -> userService.find(userId))
-        .isInstanceOf(UserNotFoundException.class);
+    assertThatThrownBy(() -> userService.find(userId)).isInstanceOf(UserNotFoundException.class);
   }
 
   @Test
@@ -149,8 +145,8 @@ class BasicUserServiceTest {
   @DisplayName("존재하지 않는 사용자 수정 시도 시 실패")
   void updateUser_WithNonExistentId_ThrowsException() {
     // given
-    UserUpdateRequest request = new UserUpdateRequest("newUsername", "new@example.com",
-        "newPassword");
+    UserUpdateRequest request =
+        new UserUpdateRequest("newUsername", "new@example.com", "newPassword");
     given(userRepository.findById(eq(userId))).willReturn(Optional.empty());
 
     // when & then
@@ -178,7 +174,6 @@ class BasicUserServiceTest {
     given(userRepository.existsById(eq(userId))).willReturn(false);
 
     // when & then
-    assertThatThrownBy(() -> userService.delete(userId))
-        .isInstanceOf(UserNotFoundException.class);
+    assertThatThrownBy(() -> userService.delete(userId)).isInstanceOf(UserNotFoundException.class);
   }
-} 
+}

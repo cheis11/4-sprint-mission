@@ -4,7 +4,6 @@ import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.RoleUpdateRequest;
 import com.sprint.mission.discodeit.security.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.service.AuthService;
-import com.sprint.mission.discodeit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,9 +29,7 @@ public class AuthController {
     String tokenValue = csrfToken.getToken();
     log.debug("CSRF 토큰 요청: {}", tokenValue);
 
-    return ResponseEntity
-        .status(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
-        .build();
+    return ResponseEntity.status(HttpStatus.NON_AUTHORITATIVE_INFORMATION).build();
   }
 
   @GetMapping("/me")
@@ -45,9 +42,9 @@ public class AuthController {
     return ResponseEntity.ok(discodeitUserDetails.getUserDto());
   }
 
-
   @PutMapping("/role")
-  public ResponseEntity<UserDto> RoleUpdateRequest(@RequestBody RoleUpdateRequest roleUpdateRequest){
+  public ResponseEntity<UserDto> RoleUpdateRequest(
+      @RequestBody RoleUpdateRequest roleUpdateRequest) {
     UserDto userDto = authService.updateUserRole(roleUpdateRequest);
     return ResponseEntity.ok(userDto);
   }

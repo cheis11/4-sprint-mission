@@ -30,17 +30,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(MockitoExtension.class)
 class BasicBinaryContentServiceTest {
 
-  @Mock
-  private BinaryContentRepository binaryContentRepository;
+  @Mock private BinaryContentRepository binaryContentRepository;
 
-  @Mock
-  private BinaryContentMapper binaryContentMapper;
+  @Mock private BinaryContentMapper binaryContentMapper;
 
-  @Mock
-  private BinaryContentStorage binaryContentStorage;
+  @Mock private BinaryContentStorage binaryContentStorage;
 
-  @InjectMocks
-  private BasicBinaryContentService binaryContentService;
+  @InjectMocks private BasicBinaryContentService binaryContentService;
 
   private UUID binaryContentId;
   private String fileName;
@@ -59,26 +55,24 @@ class BasicBinaryContentServiceTest {
     binaryContent = new BinaryContent(fileName, (long) bytes.length, contentType);
     ReflectionTestUtils.setField(binaryContent, "id", binaryContentId);
 
-    binaryContentDto = new BinaryContentDto(
-        binaryContentId,
-        fileName,
-        (long) bytes.length,
-        contentType
-    );
+    binaryContentDto =
+        new BinaryContentDto(binaryContentId, fileName, (long) bytes.length, contentType);
   }
 
   @Test
   @DisplayName("바이너리 콘텐츠 생성 성공")
   void createBinaryContent_Success() {
     // given
-    BinaryContentCreateRequest request = new BinaryContentCreateRequest(fileName, contentType,
-        bytes);
+    BinaryContentCreateRequest request =
+        new BinaryContentCreateRequest(fileName, contentType, bytes);
 
-    given(binaryContentRepository.save(any(BinaryContent.class))).will(invocation -> {
-      BinaryContent binaryContent = invocation.getArgument(0);
-      ReflectionTestUtils.setField(binaryContent, "id", binaryContentId);
-      return binaryContent;
-    });
+    given(binaryContentRepository.save(any(BinaryContent.class)))
+        .will(
+            invocation -> {
+              BinaryContent binaryContent = invocation.getArgument(0);
+              ReflectionTestUtils.setField(binaryContent, "id", binaryContentId);
+              return binaryContent;
+            });
     given(binaryContentMapper.toDto(any(BinaryContent.class))).willReturn(binaryContentDto);
 
     // when
@@ -94,8 +88,8 @@ class BasicBinaryContentServiceTest {
   @DisplayName("바이너리 콘텐츠 조회 성공")
   void findBinaryContent_Success() {
     // given
-    given(binaryContentRepository.findById(eq(binaryContentId))).willReturn(
-        Optional.of(binaryContent));
+    given(binaryContentRepository.findById(eq(binaryContentId)))
+        .willReturn(Optional.of(binaryContent));
     given(binaryContentMapper.toDto(eq(binaryContent))).willReturn(binaryContentDto);
 
     // when
@@ -169,4 +163,4 @@ class BasicBinaryContentServiceTest {
     assertThatThrownBy(() -> binaryContentService.delete(binaryContentId))
         .isInstanceOf(BinaryContentNotFoundException.class);
   }
-} 
+}

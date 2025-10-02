@@ -11,7 +11,4 @@ public record ChannelDto(
     String name,
     String description,
     List<UserDto> participants,
-    Instant lastMessageAt
-) {
-
-}
+    Instant lastMessageAt) {}

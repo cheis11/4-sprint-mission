@@ -25,9 +25,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
 
   private final Path root;
 
-  public LocalBinaryContentStorage(
-      @Value("${discodeit.storage.local.root-path}") Path root
-  ) {
+  public LocalBinaryContentStorage(@Value("${discodeit.storage.local.root-path}") Path root) {
     this.root = root;
   }
 
@@ -78,10 +76,9 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     InputStream inputStream = get(metaData.id());
     Resource resource = new InputStreamResource(inputStream);
 
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .header(HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename=\"" + metaData.fileName() + "\"")
+    return ResponseEntity.status(HttpStatus.OK)
+        .header(
+            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + metaData.fileName() + "\"")
         .header(HttpHeaders.CONTENT_TYPE, metaData.contentType())
         .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(metaData.size()))
         .body(resource);

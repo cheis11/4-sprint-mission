@@ -40,23 +40,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class BinaryContentApiIntegrationTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-  @Autowired
-  private BinaryContentService binaryContentService;
+  @Autowired private BinaryContentService binaryContentService;
 
-  @Autowired
-  private UserService userService;
+  @Autowired private UserService userService;
 
-  @Autowired
-  private ChannelService channelService;
+  @Autowired private ChannelService channelService;
 
-  @Autowired
-  private MessageService messageService;
+  @Autowired private MessageService messageService;
 
   @Test
   @DisplayName("바이너리 컨텐츠 조회 API 통합 테스트")
@@ -64,39 +58,29 @@ class BinaryContentApiIntegrationTest {
     // Given
     // 테스트 바이너리 컨텐츠 생성 (메시지 첨부파일을 통해 생성)
     // 사용자 생성
-    UserCreateRequest userRequest = new UserCreateRequest(
-        "contentuser",
-        "content@example.com",
-        "Password1!"
-    );
+    UserCreateRequest userRequest =
+        new UserCreateRequest("contentuser", "content@example.com", "Password1!");
     UserDto user = userService.create(userRequest, Optional.empty());
 
     // 채널 생성
-    PublicChannelCreateRequest channelRequest = new PublicChannelCreateRequest(
-        "테스트 채널",
-        "테스트 채널 설명입니다."
-    );
+    PublicChannelCreateRequest channelRequest =
+        new PublicChannelCreateRequest("테스트 채널", "테스트 채널 설명입니다.");
     var channel = channelService.create(channelRequest);
 
     // 첨부파일이 있는 메시지 생성
-    MessageCreateRequest messageRequest = new MessageCreateRequest(
-        "첨부파일이 있는 메시지입니다.",
-        channel.id(),
-        user.id()
-    );
+    MessageCreateRequest messageRequest =
+        new MessageCreateRequest("첨부파일이 있는 메시지입니다.", channel.id(), user.id());
 
     byte[] fileContent = "테스트 파일 내용입니다.".getBytes();
-    BinaryContentCreateRequest attachmentRequest = new BinaryContentCreateRequest(
-        "test.txt",
-        MediaType.TEXT_PLAIN_VALUE,
-        fileContent
-    );
+    BinaryContentCreateRequest attachmentRequest =
+        new BinaryContentCreateRequest("test.txt", MediaType.TEXT_PLAIN_VALUE, fileContent);
 
     MessageDto message = messageService.create(messageRequest, List.of(attachmentRequest));
     UUID binaryContentId = message.attachments().get(0).id();
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents/{binaryContentId}", binaryContentId))
+    mockMvc
+        .perform(get("/api/binaryContents/{binaryContentId}", binaryContentId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(binaryContentId.toString())))
         .andExpect(jsonPath("$.fileName", is("test.txt")))
@@ -111,7 +95,8 @@ class BinaryContentApiIntegrationTest {
     UUID nonExistentBinaryContentId = UUID.randomUUID();
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents/{binaryContentId}", nonExistentBinaryContentId))
+    mockMvc
+        .perform(get("/api/binaryContents/{binaryContentId}", nonExistentBinaryContentId))
         .andExpect(status().isNotFound());
   }
 
@@ -120,53 +105,39 @@ class BinaryContentApiIntegrationTest {
   void findAllBinaryContentsByIds_Success() throws Exception {
     // Given
     // 테스트 바이너리 컨텐츠 생성 (메시지 첨부파일을 통해 생성)
-    UserCreateRequest userRequest = new UserCreateRequest(
-        "contentuser2",
-        "content2@example.com",
-        "Password1!"
-    );
+    UserCreateRequest userRequest =
+        new UserCreateRequest("contentuser2", "content2@example.com", "Password1!");
     UserDto user = userService.create(userRequest, Optional.empty());
 
-    PublicChannelCreateRequest channelRequest = new PublicChannelCreateRequest(
-        "테스트 채널2",
-        "테스트 채널 설명입니다."
-    );
+    PublicChannelCreateRequest channelRequest =
+        new PublicChannelCreateRequest("테스트 채널2", "테스트 채널 설명입니다.");
     var channel = channelService.create(channelRequest);
 
-    MessageCreateRequest messageRequest = new MessageCreateRequest(
-        "첨부파일이 있는 메시지입니다.",
-        channel.id(),
-        user.id()
-    );
+    MessageCreateRequest messageRequest =
+        new MessageCreateRequest("첨부파일이 있는 메시지입니다.", channel.id(), user.id());
 
     // 첫 번째 첨부파일
-    BinaryContentCreateRequest attachmentRequest1 = new BinaryContentCreateRequest(
-        "test1.txt",
-        MediaType.TEXT_PLAIN_VALUE,
-        "첫 번째 테스트 파일 내용입니다.".getBytes()
-    );
+    BinaryContentCreateRequest attachmentRequest1 =
+        new BinaryContentCreateRequest(
+            "test1.txt", MediaType.TEXT_PLAIN_VALUE, "첫 번째 테스트 파일 내용입니다.".getBytes());
 
     // 두 번째 첨부파일
-    BinaryContentCreateRequest attachmentRequest2 = new BinaryContentCreateRequest(
-        "test2.txt",
-        MediaType.TEXT_PLAIN_VALUE,
-        "두 번째 테스트 파일 내용입니다.".getBytes()
-    );
+    BinaryContentCreateRequest attachmentRequest2 =
+        new BinaryContentCreateRequest(
+            "test2.txt", MediaType.TEXT_PLAIN_VALUE, "두 번째 테스트 파일 내용입니다.".getBytes());
 
     // 첨부파일 두 개를 가진 메시지 생성
-    MessageDto message = messageService.create(
-        messageRequest,
-        List.of(attachmentRequest1, attachmentRequest2)
-    );
+    MessageDto message =
+        messageService.create(messageRequest, List.of(attachmentRequest1, attachmentRequest2));
 
-    List<UUID> binaryContentIds = message.attachments().stream()
-        .map(BinaryContentDto::id)
-        .toList();
+    List<UUID> binaryContentIds = message.attachments().stream().map(BinaryContentDto::id).toList();
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents")
-            .param("binaryContentIds", binaryContentIds.get(0).toString())
-            .param("binaryContentIds", binaryContentIds.get(1).toString()))
+    mockMvc
+        .perform(
+            get("/api/binaryContents")
+                .param("binaryContentIds", binaryContentIds.get(0).toString())
+                .param("binaryContentIds", binaryContentIds.get(1).toString()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(2)))
         .andExpect(jsonPath("$[*].fileName", hasItems("test1.txt", "test2.txt")));
@@ -177,20 +148,19 @@ class BinaryContentApiIntegrationTest {
   void downloadBinaryContent_Success() throws Exception {
     // Given
     String fileContent = "다운로드 테스트 파일 내용입니다.";
-    BinaryContentCreateRequest createRequest = new BinaryContentCreateRequest(
-        "download-test.txt",
-        MediaType.TEXT_PLAIN_VALUE,
-        fileContent.getBytes()
-    );
+    BinaryContentCreateRequest createRequest =
+        new BinaryContentCreateRequest(
+            "download-test.txt", MediaType.TEXT_PLAIN_VALUE, fileContent.getBytes());
 
     BinaryContentDto binaryContent = binaryContentService.create(createRequest);
     UUID binaryContentId = binaryContent.id();
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents/{binaryContentId}/download", binaryContentId))
+    mockMvc
+        .perform(get("/api/binaryContents/{binaryContentId}/download", binaryContentId))
         .andExpect(status().isOk())
-        .andExpect(header().string("Content-Disposition",
-            "attachment; filename=\"download-test.txt\""))
+        .andExpect(
+            header().string("Content-Disposition", "attachment; filename=\"download-test.txt\""))
         .andExpect(content().contentType(MediaType.TEXT_PLAIN_VALUE))
         .andExpect(content().bytes(fileContent.getBytes()));
   }
@@ -202,8 +172,8 @@ class BinaryContentApiIntegrationTest {
     UUID nonExistentBinaryContentId = UUID.randomUUID();
 
     // When & Then
-    mockMvc.perform(
-            get("/api/binaryContents/{binaryContentId}/download", nonExistentBinaryContentId))
+    mockMvc
+        .perform(get("/api/binaryContents/{binaryContentId}/download", nonExistentBinaryContentId))
         .andExpect(status().isNotFound());
   }
-} 
+}

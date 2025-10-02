@@ -30,13 +30,16 @@ public class BasicAuthService implements AuthService {
   public UserDto updateUserRole(RoleUpdateRequest roleUpdateRequest) {
     UUID userId = roleUpdateRequest.userId();
     log.debug("사용자 권한수정 시작: id={}", userId);
-    UserDto userDto = userRepository.findById(userId)
-        .map(user -> {
-          user.updateRole(roleUpdateRequest.newRole());
-          return userRepository.save(user);
-        })
-        .map(userMapper::toDto)
-        .orElseThrow(() -> UserNotFoundException.withId(userId));
+    UserDto userDto =
+        userRepository
+            .findById(userId)
+            .map(
+                user -> {
+                  user.updateRole(roleUpdateRequest.newRole());
+                  return userRepository.save(user);
+                })
+            .map(userMapper::toDto)
+            .orElseThrow(() -> UserNotFoundException.withId(userId));
     log.info("사용자 권한수정 완료: id={}", userId);
     invalidateUserSessions(userDto.username());
     return userDto;
@@ -64,4 +67,5 @@ public class BasicAuthService implements AuthService {
         .filter(principal -> principal instanceof DiscodeitUserDetails)
         .map(principal -> (DiscodeitUserDetails) principal)
         .anyMatch(userDetails -> userDetails.getUsername().equals(username));
-  }}
+  }
+}

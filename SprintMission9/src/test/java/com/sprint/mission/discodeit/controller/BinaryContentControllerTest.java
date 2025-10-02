@@ -28,35 +28,29 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(BinaryContentController.class)
 class BinaryContentControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean
-  private BinaryContentService binaryContentService;
+  @MockitoBean private BinaryContentService binaryContentService;
 
-  @MockitoBean
-  private BinaryContentStorage binaryContentStorage;
+  @MockitoBean private BinaryContentStorage binaryContentStorage;
 
   @Test
   @DisplayName("바이너리 컨텐츠 조회 성공 테스트")
   void find_Success() throws Exception {
     // Given
     UUID binaryContentId = UUID.randomUUID();
-    BinaryContentDto binaryContent = new BinaryContentDto(
-        binaryContentId,
-        "test.jpg",
-        10240L,
-        MediaType.IMAGE_JPEG_VALUE
-    );
+    BinaryContentDto binaryContent =
+        new BinaryContentDto(binaryContentId, "test.jpg", 10240L, MediaType.IMAGE_JPEG_VALUE);
 
     given(binaryContentService.find(binaryContentId)).willReturn(binaryContent);
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents/{binaryContentId}", binaryContentId)
-            .contentType(MediaType.APPLICATION_JSON))
+    mockMvc
+        .perform(
+            get("/api/binaryContents/{binaryContentId}", binaryContentId)
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(binaryContentId.toString()))
         .andExpect(jsonPath("$.fileName").value("test.jpg"))
@@ -74,8 +68,10 @@ class BinaryContentControllerTest {
         .willThrow(BinaryContentNotFoundException.withId(nonExistentId));
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents/{binaryContentId}", nonExistentId)
-            .contentType(MediaType.APPLICATION_JSON))
+    mockMvc
+        .perform(
+            get("/api/binaryContents/{binaryContentId}", nonExistentId)
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 
@@ -88,17 +84,19 @@ class BinaryContentControllerTest {
 
     List<UUID> binaryContentIds = List.of(id1, id2);
 
-    List<BinaryContentDto> binaryContents = List.of(
-        new BinaryContentDto(id1, "test1.jpg", 10240L, MediaType.IMAGE_JPEG_VALUE),
-        new BinaryContentDto(id2, "test2.pdf", 20480L, MediaType.APPLICATION_PDF_VALUE)
-    );
+    List<BinaryContentDto> binaryContents =
+        List.of(
+            new BinaryContentDto(id1, "test1.jpg", 10240L, MediaType.IMAGE_JPEG_VALUE),
+            new BinaryContentDto(id2, "test2.pdf", 20480L, MediaType.APPLICATION_PDF_VALUE));
 
     given(binaryContentService.findAllByIdIn(binaryContentIds)).willReturn(binaryContents);
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents")
-            .param("binaryContentIds", id1.toString(), id2.toString())
-            .contentType(MediaType.APPLICATION_JSON))
+    mockMvc
+        .perform(
+            get("/api/binaryContents")
+                .param("binaryContentIds", id1.toString(), id2.toString())
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].id").value(id1.toString()))
         .andExpect(jsonPath("$[0].fileName").value("test1.jpg"))
@@ -111,25 +109,23 @@ class BinaryContentControllerTest {
   void download_Success() throws Exception {
     // Given
     UUID binaryContentId = UUID.randomUUID();
-    BinaryContentDto binaryContent = new BinaryContentDto(
-        binaryContentId,
-        "test.jpg",
-        10240L,
-        MediaType.IMAGE_JPEG_VALUE
-    );
+    BinaryContentDto binaryContent =
+        new BinaryContentDto(binaryContentId, "test.jpg", 10240L, MediaType.IMAGE_JPEG_VALUE);
 
     given(binaryContentService.find(binaryContentId)).willReturn(binaryContent);
 
     // doReturn 사용하여 타입 문제 우회
-    ResponseEntity<ByteArrayResource> mockResponse = ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"test.jpg\"")
-        .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
-        .body(new ByteArrayResource("test data".getBytes()));
+    ResponseEntity<ByteArrayResource> mockResponse =
+        ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"test.jpg\"")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
+            .body(new ByteArrayResource("test data".getBytes()));
 
     doReturn(mockResponse).when(binaryContentStorage).download(any(BinaryContentDto.class));
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents/{binaryContentId}/download", binaryContentId))
+    mockMvc
+        .perform(get("/api/binaryContents/{binaryContentId}/download", binaryContentId))
         .andExpect(status().isOk());
   }
 
@@ -143,7 +139,8 @@ class BinaryContentControllerTest {
         .willThrow(BinaryContentNotFoundException.withId(nonExistentId));
 
     // When & Then
-    mockMvc.perform(get("/api/binaryContents/{binaryContentId}/download", nonExistentId))
+    mockMvc
+        .perform(get("/api/binaryContents/{binaryContentId}/download", nonExistentId))
         .andExpect(status().isNotFound());
   }
-} 
+}

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,11 +38,10 @@ public class UserController implements UserApi {
   @Override
   public ResponseEntity<UserDto> create(
       @RequestPart("userCreateRequest") @Valid UserCreateRequest userCreateRequest,
-      @RequestPart(value = "profile", required = false) MultipartFile profile
-  ) {
+      @RequestPart(value = "profile", required = false) MultipartFile profile) {
     log.info("사용자 생성 요청: {}", userCreateRequest);
-    Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
-        .flatMap(this::resolveProfileRequest);
+    Optional<BinaryContentCreateRequest> profileRequest =
+        Optional.ofNullable(profile).flatMap(this::resolveProfileRequest);
     UserDto createdUser = userService.create(userCreateRequest, profileRequest);
     log.debug("사용자 생성 응답: {}", createdUser);
     return ResponseEntity.ok(createdUser);
@@ -50,40 +49,32 @@ public class UserController implements UserApi {
 
   @PatchMapping(
       path = "{userId}",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
+      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @Override
   public ResponseEntity<UserDto> update(
       @PathVariable("userId") UUID userId,
       @RequestPart("userUpdateRequest") @Valid UserUpdateRequest userUpdateRequest,
-      @RequestPart(value = "profile", required = false) MultipartFile profile
-  ) {
+      @RequestPart(value = "profile", required = false) MultipartFile profile) {
     log.info("사용자 수정 요청: id={}, request={}", userId, userUpdateRequest);
-    Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
-        .flatMap(this::resolveProfileRequest);
+    Optional<BinaryContentCreateRequest> profileRequest =
+        Optional.ofNullable(profile).flatMap(this::resolveProfileRequest);
     UserDto updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
     log.debug("사용자 수정 응답: {}", updatedUser);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(updatedUser);
+    return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
   }
 
   @DeleteMapping(path = "{userId}")
   @Override
   public ResponseEntity<Void> delete(@PathVariable("userId") UUID userId) {
     userService.delete(userId);
-    return ResponseEntity
-        .status(HttpStatus.NO_CONTENT)
-        .build();
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   @GetMapping
   @Override
   public ResponseEntity<List<UserDto>> findAll() {
     List<UserDto> users = userService.findAll();
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(users);
+    return ResponseEntity.status(HttpStatus.OK).body(users);
   }
 
   private Optional<BinaryContentCreateRequest> resolveProfileRequest(MultipartFile profileFile) {
@@ -91,11 +82,11 @@ public class UserController implements UserApi {
       return Optional.empty();
     } else {
       try {
-        BinaryContentCreateRequest binaryContentCreateRequest = new BinaryContentCreateRequest(
-            profileFile.getOriginalFilename(),
-            profileFile.getContentType(),
-            profileFile.getBytes()
-        );
+        BinaryContentCreateRequest binaryContentCreateRequest =
+            new BinaryContentCreateRequest(
+                profileFile.getOriginalFilename(),
+                profileFile.getContentType(),
+                profileFile.getBytes());
         return Optional.of(binaryContentCreateRequest);
       } catch (IOException e) {
         throw new RuntimeException(e);

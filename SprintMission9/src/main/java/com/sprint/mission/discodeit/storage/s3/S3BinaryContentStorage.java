@@ -43,8 +43,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
       @Value("${discodeit.storage.s3.access-key}") String accessKey,
       @Value("${discodeit.storage.s3.secret-key}") String secretKey,
       @Value("${discodeit.storage.s3.region}") String region,
-      @Value("${discodeit.storage.s3.bucket}") String bucket
-  ) {
+      @Value("${discodeit.storage.s3.bucket}") String bucket) {
     this.accessKey = accessKey;
     this.secretKey = secretKey;
     this.region = region;
@@ -57,10 +56,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
     try {
       S3Client s3Client = getS3Client();
 
-      PutObjectRequest request = PutObjectRequest.builder()
-          .bucket(bucket)
-          .key(key)
-          .build();
+      PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).build();
 
       s3Client.putObject(request, RequestBody.fromBytes(bytes));
       log.info("S3에 파일 업로드 성공: {}", key);
@@ -78,10 +74,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
     try {
       S3Client s3Client = getS3Client();
 
-      GetObjectRequest request = GetObjectRequest.builder()
-          .bucket(bucket)
-          .key(key)
-          .build();
+      GetObjectRequest request = GetObjectRequest.builder().bucket(bucket).key(key).build();
 
       byte[] bytes = s3Client.getObjectAsBytes(request).asByteArray();
       return new ByteArrayInputStream(bytes);
@@ -95,10 +88,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
     return S3Client.builder()
         .region(Region.of(region))
         .credentialsProvider(
-            StaticCredentialsProvider.create(
-                AwsBasicCredentials.create(accessKey, secretKey)
-            )
-        )
+            StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
         .build();
   }
 
@@ -110,8 +100,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
 
       log.info("생성된 Presigned URL: {}", presignedUrl);
 
-      return ResponseEntity
-          .status(HttpStatus.FOUND)
+      return ResponseEntity.status(HttpStatus.FOUND)
           .header(HttpHeaders.LOCATION, presignedUrl)
           .build();
     } catch (Exception e) {
@@ -122,16 +111,18 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
 
   private String generatePresignedUrl(String key, String contentType) {
     try (S3Presigner presigner = getS3Presigner()) {
-      GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-          .bucket(bucket)
-          .key(key)
-          .responseContentType(contentType)
-          .build();
+      GetObjectRequest getObjectRequest =
+          GetObjectRequest.builder()
+              .bucket(bucket)
+              .key(key)
+              .responseContentType(contentType)
+              .build();
 
-      GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-          .signatureDuration(Duration.ofSeconds(presignedUrlExpirationSeconds))
-          .getObjectRequest(getObjectRequest)
-          .build();
+      GetObjectPresignRequest presignRequest =
+          GetObjectPresignRequest.builder()
+              .signatureDuration(Duration.ofSeconds(presignedUrlExpirationSeconds))
+              .getObjectRequest(getObjectRequest)
+              .build();
 
       PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
       return presignedRequest.url().toString();
@@ -142,10 +133,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
     return S3Presigner.builder()
         .region(Region.of(region))
         .credentialsProvider(
-            StaticCredentialsProvider.create(
-                AwsBasicCredentials.create(accessKey, secretKey)
-            )
-        )
+            StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
         .build();
   }
-} 
+}

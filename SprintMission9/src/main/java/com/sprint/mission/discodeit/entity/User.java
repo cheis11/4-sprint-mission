@@ -1,6 +1,5 @@
 package com.sprint.mission.discodeit.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sprint.mission.discodeit.entity.base.BaseUpdatableEntity;
 import com.sprint.mission.discodeit.security.Role;
 import jakarta.persistence.CascadeType;
@@ -15,23 +14,26 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "users")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)  // JPA를 위한 기본 생성자
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA를 위한 기본 생성자
 public class User extends BaseUpdatableEntity {
 
   @Column(length = 50, nullable = false, unique = true)
   private String username;
+
   @Column(length = 100, nullable = false, unique = true)
   private String email;
+
   @Column(length = 60, nullable = false)
   private String password;
+
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @JoinColumn(name = "profile_id", columnDefinition = "uuid")
   private BinaryContent profile;
+
   @Enumerated(EnumType.STRING)
   private Role role;
 
@@ -43,8 +45,8 @@ public class User extends BaseUpdatableEntity {
     role = Role.USER;
   }
 
-  public void update(String newUsername, String newEmail, String newPassword,
-      BinaryContent newProfile) {
+  public void update(
+      String newUsername, String newEmail, String newPassword, BinaryContent newProfile) {
     if (newUsername != null && !newUsername.equals(this.username)) {
       this.username = newUsername;
     }

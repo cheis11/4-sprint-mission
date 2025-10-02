@@ -34,8 +34,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 @DisplayName("S3BinaryContentStorage 테스트")
 class S3BinaryContentStorageTest {
 
-  @Autowired
-  private S3BinaryContentStorage s3BinaryContentStorage;
+  @Autowired private S3BinaryContentStorage s3BinaryContentStorage;
 
   @Value("${discodeit.storage.s3.bucket}")
   private String bucket;
@@ -63,20 +62,17 @@ class S3BinaryContentStorageTest {
     // 테스트 종료 후 생성된 S3 객체 삭제
     try {
       // S3 클라이언트 생성
-      S3Client s3Client = S3Client.builder()
-          .region(Region.of(region))
-          .credentialsProvider(
-              StaticCredentialsProvider.create(
-                  AwsBasicCredentials.create(accessKey, secretKey)
-              )
-          )
-          .build();
+      S3Client s3Client =
+          S3Client.builder()
+              .region(Region.of(region))
+              .credentialsProvider(
+                  StaticCredentialsProvider.create(
+                      AwsBasicCredentials.create(accessKey, secretKey)))
+              .build();
 
       // 테스트에서 생성한 객체 삭제
-      DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-          .bucket(bucket)
-          .key(testId.toString())
-          .build();
+      DeleteObjectRequest deleteRequest =
+          DeleteObjectRequest.builder().bucket(bucket).key(testId.toString()).build();
 
       s3Client.deleteObject(deleteRequest);
       System.out.println("테스트 객체 삭제 완료: " + testId);
@@ -129,9 +125,8 @@ class S3BinaryContentStorageTest {
   void download_success() {
     // given
     s3BinaryContentStorage.put(testId, testData);
-    BinaryContentDto dto = new BinaryContentDto(
-        testId, "test.txt", (long) testData.length, "text/plain"
-    );
+    BinaryContentDto dto =
+        new BinaryContentDto(testId, "test.txt", (long) testData.length, "text/plain");
 
     // when
     ResponseEntity<Void> response = s3BinaryContentStorage.download(dto);
@@ -144,4 +139,4 @@ class S3BinaryContentStorageTest {
     assertThat(location).contains(bucket);
     assertThat(location).contains(testId.toString());
   }
-} 
+}

@@ -20,16 +20,11 @@ public class AdminInitializer implements CommandLineRunner {
     String adminEmail = "admin@email.com";
 
     if (!userRepository.existsByEmail(adminEmail)) {
-      User admin = new User(
-          "admin",
-          adminEmail,
-          passwordEncoder.encode("1111!"),
-          null
-      );
+      User admin = new User("admin", adminEmail, passwordEncoder.encode("1111!"), null);
       admin.updateRole(Role.ADMIN);
-//      UserStatus adminStatus = new UserStatus(admin, Instant.now());
+      //      UserStatus adminStatus = new UserStatus(admin, Instant.now());
       userRepository.save(admin);
-//      userStatusRepository.save(adminStatus);
+      //      userStatusRepository.save(adminStatus);
       System.out.println("Admin account has been created");
     }
   }

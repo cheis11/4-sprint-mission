@@ -37,7 +37,8 @@ public class BasicUserService implements UserService {
 
   @Transactional
   @Override
-  public UserDto create(UserCreateRequest userCreateRequest,
+  public UserDto create(
+      UserCreateRequest userCreateRequest,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
     log.debug("사용자 생성 시작: {}", userCreateRequest);
 
@@ -51,18 +52,20 @@ public class BasicUserService implements UserService {
       throw UserAlreadyExistsException.withUsername(username);
     }
 
-    BinaryContent nullableProfile = optionalProfileCreateRequest
-        .map(profileRequest -> {
-          String fileName = profileRequest.fileName();
-          String contentType = profileRequest.contentType();
-          byte[] bytes = profileRequest.bytes();
-          BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
-              contentType);
-          binaryContentRepository.save(binaryContent);
-          binaryContentStorage.put(binaryContent.getId(), bytes);
-          return binaryContent;
-        })
-        .orElse(null);
+    BinaryContent nullableProfile =
+        optionalProfileCreateRequest
+            .map(
+                profileRequest -> {
+                  String fileName = profileRequest.fileName();
+                  String contentType = profileRequest.contentType();
+                  byte[] bytes = profileRequest.bytes();
+                  BinaryContent binaryContent =
+                      new BinaryContent(fileName, (long) bytes.length, contentType);
+                  binaryContentRepository.save(binaryContent);
+                  binaryContentStorage.put(binaryContent.getId(), bytes);
+                  return binaryContent;
+                })
+            .orElse(null);
 
     String encodedPassword = passwordEncoder.encode(userCreateRequest.password());
     User user = new User(username, email, encodedPassword, nullableProfile);
@@ -70,63 +73,45 @@ public class BasicUserService implements UserService {
 
     UserDto dto = userMapper.toDto(user);
     boolean online = authService.isUserOnline(user.getUsername()); // BasicAuthService 이용
-    return new UserDto(
-        dto.id(),
-        dto.username(),
-        dto.email(),
-        dto.profile(),
-        online,
-        dto.role()
-    );
+    return new UserDto(dto.id(), dto.username(), dto.email(), dto.profile(), online, dto.role());
   }
 
   @Transactional(readOnly = true)
   @Override
   public UserDto find(UUID userId) {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> UserNotFoundException.withId(userId));
+    User user =
+        userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.withId(userId));
 
     UserDto dto = userMapper.toDto(user);
     boolean online = authService.isUserOnline(user.getUsername());
-    return new UserDto(
-        dto.id(),
-        dto.username(),
-        dto.email(),
-        dto.profile(),
-        online,
-        dto.role()
-    );
+    return new UserDto(dto.id(), dto.username(), dto.email(), dto.profile(), online, dto.role());
   }
 
   @Transactional(readOnly = true)
   @Override
   public List<UserDto> findAll() {
-    return userRepository.findAllWithProfile()
-        .stream()
-        .map(user -> {
-          UserDto dto = userMapper.toDto(user);
-          boolean online = authService.isUserOnline(user.getUsername());
-          return new UserDto(
-              dto.id(),
-              dto.username(),
-              dto.email(),
-              dto.profile(),
-              online,
-              dto.role()
-          );
-        })
+    return userRepository.findAllWithProfile().stream()
+        .map(
+            user -> {
+              UserDto dto = userMapper.toDto(user);
+              boolean online = authService.isUserOnline(user.getUsername());
+              return new UserDto(
+                  dto.id(), dto.username(), dto.email(), dto.profile(), online, dto.role());
+            })
         .toList();
   }
 
   @PreAuthorize("#userId == authentication.principal.userId")
   @Transactional
   @Override
-  public UserDto update(UUID userId, UserUpdateRequest userUpdateRequest,
+  public UserDto update(
+      UUID userId,
+      UserUpdateRequest userUpdateRequest,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
     log.debug("사용자 수정 시작: id={}, request={}", userId, userUpdateRequest);
 
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> UserNotFoundException.withId(userId));
+    User user =
+        userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.withId(userId));
 
     String newUsername = userUpdateRequest.newUsername();
     String newEmail = userUpdateRequest.newEmail();
@@ -138,32 +123,27 @@ public class BasicUserService implements UserService {
       throw UserAlreadyExistsException.withUsername(newUsername);
     }
 
-    BinaryContent nullableProfile = optionalProfileCreateRequest
-        .map(profileRequest -> {
-          String fileName = profileRequest.fileName();
-          String contentType = profileRequest.contentType();
-          byte[] bytes = profileRequest.bytes();
-          BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
-              contentType);
-          binaryContentRepository.save(binaryContent);
-          binaryContentStorage.put(binaryContent.getId(), bytes);
-          return binaryContent;
-        })
-        .orElse(null);
+    BinaryContent nullableProfile =
+        optionalProfileCreateRequest
+            .map(
+                profileRequest -> {
+                  String fileName = profileRequest.fileName();
+                  String contentType = profileRequest.contentType();
+                  byte[] bytes = profileRequest.bytes();
+                  BinaryContent binaryContent =
+                      new BinaryContent(fileName, (long) bytes.length, contentType);
+                  binaryContentRepository.save(binaryContent);
+                  binaryContentStorage.put(binaryContent.getId(), bytes);
+                  return binaryContent;
+                })
+            .orElse(null);
 
     String newPassword = userUpdateRequest.newPassword();
     user.update(newUsername, newEmail, newPassword, nullableProfile);
 
     UserDto dto = userMapper.toDto(user);
     boolean online = authService.isUserOnline(user.getUsername());
-    return new UserDto(
-        dto.id(),
-        dto.username(),
-        dto.email(),
-        dto.profile(),
-        online,
-        dto.role()
-    );
+    return new UserDto(dto.id(), dto.username(), dto.email(), dto.profile(), online, dto.role());
   }
 
   @PreAuthorize("#userId == authentication.principal.userId")

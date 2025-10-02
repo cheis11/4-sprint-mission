@@ -14,7 +14,8 @@ public class MessageAuthChecker {
   }
 
   public boolean isAuthor(UUID messageId, UUID userId) {
-    return messageRepository.findById(messageId)
+    return messageRepository
+        .findById(messageId)
         .map(m -> m.getAuthor().getId().equals(userId))
         .orElse(false); // 메시지가 없으면 false
   }
