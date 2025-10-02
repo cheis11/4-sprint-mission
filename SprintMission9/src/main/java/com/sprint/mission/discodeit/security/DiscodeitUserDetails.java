@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.security;
 
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import java.util.Collection;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -59,5 +60,9 @@ public class DiscodeitUserDetails implements UserDetails {
   @Override
   public int hashCode() {
     return this.userDto.hashCode();
+  }
+
+  public UUID getUserId() {
+    return this.userDto.id();
   }
 }
