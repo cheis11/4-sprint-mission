@@ -65,13 +65,13 @@ public class GlobalExceptionHandler {
         .body(response);
   }
 
-  @ExceptionHandler(AuthorizationDeniedException.class)
-  public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+  @ExceptionHandler({AccessDeniedException.class, AuthorizationDeniedException.class})
+  public ResponseEntity<ErrorResponse> handleAccessDeniedException(RuntimeException e) {
     log.warn("권한 없음 발생: {}", e.getMessage(), e);
 
     ErrorResponse response = new ErrorResponse(
         Instant.now(),
-        "SECURITY_ACCESS_DENIED",       // ErrorCode로 정의해도 됨
+        "SECURITY_ACCESS_DENIED",
         "권한이 없습니다.",
         null,
         e.getClass().getSimpleName(),

@@ -19,13 +19,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@PreAuthorize("hasRole('ADMIN')")
 public class BasicAuthService implements AuthService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final SessionRegistry sessionRegistry;
 
+  @PreAuthorize("hasRole('ADMIN')")
   @Override
   public UserDto updateUserRole(RoleUpdateRequest roleUpdateRequest) {
     UUID userId = roleUpdateRequest.userId();
@@ -42,6 +42,7 @@ public class BasicAuthService implements AuthService {
     return userDto;
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @Override
   public void invalidateUserSessions(String username) {
     List<Object> principals = sessionRegistry.getAllPrincipals();
@@ -60,7 +61,7 @@ public class BasicAuthService implements AuthService {
   @Override
   public boolean isUserOnline(String username) {
     return sessionRegistry.getAllPrincipals().stream()
-        .filter(principal -> principal instanceof org.springframework.security.core.userdetails.User)
-        .map(principal -> (org.springframework.security.core.userdetails.User) principal)
+        .filter(principal -> principal instanceof DiscodeitUserDetails)
+        .map(principal -> (DiscodeitUserDetails) principal)
         .anyMatch(userDetails -> userDetails.getUsername().equals(username));
   }}

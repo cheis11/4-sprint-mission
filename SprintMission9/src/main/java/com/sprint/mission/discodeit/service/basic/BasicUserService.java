@@ -13,14 +13,11 @@ import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.session.SessionInformation;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +32,7 @@ public class BasicUserService implements UserService {
   private final BinaryContentRepository binaryContentRepository;
   private final BinaryContentStorage binaryContentStorage;
   private final PasswordEncoder passwordEncoder;
-  private final SessionRegistry sessionRegistry;
+  private final BasicAuthService authService; // BasicAuthService 주입
 
   @Transactional
   @Override
@@ -70,8 +67,8 @@ public class BasicUserService implements UserService {
     User user = new User(username, email, encodedPassword, nullableProfile);
     userRepository.save(user);
 
-    boolean online = isUserOnline(user);
     UserDto dto = userMapper.toDto(user);
+    boolean online = authService.isUserOnline(user.getUsername()); // BasicAuthService 이용
     return new UserDto(
         dto.id(),
         dto.username(),
@@ -88,9 +85,8 @@ public class BasicUserService implements UserService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> UserNotFoundException.withId(userId));
 
-    boolean online = isUserOnline(user);
     UserDto dto = userMapper.toDto(user);
-
+    boolean online = authService.isUserOnline(user.getUsername());
     return new UserDto(
         dto.id(),
         dto.username(),
@@ -107,8 +103,8 @@ public class BasicUserService implements UserService {
     return userRepository.findAllWithProfile()
         .stream()
         .map(user -> {
-          boolean online = isUserOnline(user);
           UserDto dto = userMapper.toDto(user);
+          boolean online = authService.isUserOnline(user.getUsername());
           return new UserDto(
               dto.id(),
               dto.username(),
@@ -156,9 +152,8 @@ public class BasicUserService implements UserService {
     String newPassword = userUpdateRequest.newPassword();
     user.update(newUsername, newEmail, newPassword, nullableProfile);
 
-    boolean online = isUserOnline(user);
     UserDto dto = userMapper.toDto(user);
-
+    boolean online = authService.isUserOnline(user.getUsername());
     return new UserDto(
         dto.id(),
         dto.username(),
@@ -180,10 +175,5 @@ public class BasicUserService implements UserService {
 
     userRepository.deleteById(userId);
     log.info("사용자 삭제 완료: id={}", userId);
-  }
-
-  private boolean isUserOnline(User user) {
-    List<SessionInformation> sessions = sessionRegistry.getAllSessions(user.getUsername(), false);
-    return sessions != null && !sessions.isEmpty();
   }
 }
