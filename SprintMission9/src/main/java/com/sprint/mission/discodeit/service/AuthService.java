@@ -7,4 +7,6 @@ public interface AuthService {
   UserDto updateUserRole(RoleUpdateRequest roleUpdateRequest);
 
   void invalidateUserSessions(String username);
+
+  boolean isUserOnline(String username);
 }

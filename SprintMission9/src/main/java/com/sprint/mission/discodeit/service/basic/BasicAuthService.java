@@ -56,4 +56,11 @@ public class BasicAuthService implements AuthService {
       }
     }
   }
-}
+
+  @Override
+  public boolean isUserOnline(String username) {
+    return sessionRegistry.getAllPrincipals().stream()
+        .filter(principal -> principal instanceof org.springframework.security.core.userdetails.User)
+        .map(principal -> (org.springframework.security.core.userdetails.User) principal)
+        .anyMatch(userDetails -> userDetails.getUsername().equals(username));
+  }}
