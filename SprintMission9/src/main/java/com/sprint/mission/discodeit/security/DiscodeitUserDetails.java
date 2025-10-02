@@ -47,4 +47,17 @@ public class DiscodeitUserDetails implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof DiscodeitUserDetails) {
+      return this.userDto.equals(((DiscodeitUserDetails) o).userDto);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.userDto.hashCode();
+  }
 }

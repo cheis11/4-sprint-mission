@@ -5,4 +5,6 @@ import com.sprint.mission.discodeit.dto.request.RoleUpdateRequest;
 
 public interface AuthService {
   UserDto updateUserRole(RoleUpdateRequest roleUpdateRequest);
+
+  void invalidateUserSessions(String username);
 }
