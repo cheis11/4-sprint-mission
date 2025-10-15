@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.config;
 
+import com.sprint.mission.discodeit.security.handler.JWTLoginSuccessHandler;
 import com.sprint.mission.discodeit.security.userdetails.DiscodeitUserDetailsService;
 import com.sprint.mission.discodeit.security.handler.LoginFailureHandler;
 import com.sprint.mission.discodeit.security.handler.LoginSuccessHandler;
@@ -45,8 +46,8 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(
       HttpSecurity http,
-      LoginSuccessHandler loginSuccessHandler,
-      LoginFailureHandler loginFailureHandler)
+      LoginFailureHandler loginFailureHandler,
+      JWTLoginSuccessHandler jWTLoginSuccessHandler)
       throws Exception {
     http.csrf(
             csrf ->
@@ -56,7 +57,7 @@ public class SecurityConfig {
             login ->
                 login
                     .loginProcessingUrl("/api/auth/login")
-                    .successHandler(loginSuccessHandler)
+                    .successHandler(jWTLoginSuccessHandler)
                     .failureHandler(loginFailureHandler))
         .rememberMe(
             remember ->
