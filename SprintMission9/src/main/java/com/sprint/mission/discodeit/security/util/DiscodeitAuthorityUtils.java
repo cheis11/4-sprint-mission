@@ -1,4 +1,4 @@
-package com.sprint.mission.discodeit.security;
+package com.sprint.mission.discodeit.security.util;
 
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import java.util.List;

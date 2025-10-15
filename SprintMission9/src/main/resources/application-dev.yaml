@@ -28,3 +28,7 @@ management:
 mail:
   address:
     admin: admin@email.com
+jwt:
+  key: 98s4fg81a84vb8sd941b89ds1fvb85961ds89189v1fd8sv4fds81986vfdsd1sa56f1sa56sd5f15
+  access-token-expiration-minutes: 30
+  refresh-token-expiration-minutes: 420
