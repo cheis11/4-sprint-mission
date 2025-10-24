@@ -9,4 +9,5 @@ public interface NotificationService {
   List<NotificationDto> getNotifications(UUID userId);
   Optional<NotificationDto> getNotification(UUID notificationId);
   void deleteNotification(UUID notificationId);
+  void notifyFailure(String requestId, UUID binaryContentId, String errorMessage);
 }
