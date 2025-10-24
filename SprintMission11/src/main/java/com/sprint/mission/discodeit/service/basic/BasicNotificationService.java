@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +31,7 @@ public class BasicNotificationService implements NotificationService {
     this.userRepository = userRepository;
   }
 
+  @Cacheable("notifications")
   @Override
   public List<NotificationDto> getNotifications(UUID userId) {
     List<Notification> notifications = notificationRepository.findAllByReceiverId(userId);
@@ -45,11 +48,13 @@ public class BasicNotificationService implements NotificationService {
     return Optional.ofNullable(notificationMapper.toDto(notification));
   }
 
+  @CacheEvict(value = "notifications", allEntries = true)
   @Override
   public void deleteNotification(UUID notificationId) {
     notificationRepository.deleteById(notificationId);
   }
 
+  @CacheEvict(value = "notifications", allEntries = true)
   @Override
   public void notifyFailure(String requestId, UUID binaryContentId, String errorMessage) {
     List<User> admins = userRepository.findAllByRole(Role.ADMIN);
