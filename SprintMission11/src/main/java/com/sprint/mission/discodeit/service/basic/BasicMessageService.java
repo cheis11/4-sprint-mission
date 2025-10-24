@@ -34,6 +34,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Slf4j
 @Service
@@ -87,6 +88,7 @@ public class BasicMessageService implements MessageService {
 
     messageRepository.save(message);
     log.info("메시지 생성 완료: id={}, channelId={}", message.getId(), channelId);
+    log.debug("트랜잭션 활성화 여부: {}", TransactionSynchronizationManager.isActualTransactionActive());
     publisher.publishEvent(new MessageCreatedEvent(this, author, channel, content));
     return messageMapper.toDto(message);
   }

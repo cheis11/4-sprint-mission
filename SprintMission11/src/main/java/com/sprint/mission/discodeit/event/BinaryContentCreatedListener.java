@@ -6,12 +6,14 @@ import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Component
+@Async
 public class BinaryContentCreatedListener {
 
   private final BinaryContentStorage binaryContentStorage;

@@ -42,7 +42,6 @@ public class BasicAuthService implements AuthService {
   @Transactional
   @Override
   public UserDto updateRole(RoleUpdateRequest request) {
-    publisher.publishEvent(new RoleUpdatedEvent(this, request.userId(), request.newRole()));
     return updateRoleInternal(request);
   }
 
@@ -52,12 +51,12 @@ public class BasicAuthService implements AuthService {
     UUID userId = request.userId();
     User user = userRepository.findById(userId)
         .orElseThrow(() -> UserNotFoundException.withId(userId));
-
+    Role userRole = user.getRole();
     Role newRole = request.newRole();
     user.updateRole(newRole);
 
     jwtRegistry.invalidateJwtInformationByUserId(userId);
-
+    publisher.publishEvent(new RoleUpdatedEvent(this, request.userId(), userRole, request.newRole()));
     return userMapper.toDto(user);
   }
 

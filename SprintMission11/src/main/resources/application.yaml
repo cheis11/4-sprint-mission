@@ -25,6 +25,9 @@ management:
   endpoint:
     health:
       show-details: always
+  observations:
+    annotations:
+      enabled: true
 
 info:
   name: Discodeit
@@ -68,6 +71,15 @@ discodeit:
     refresh-token:
       secret: ${JWT_REFRESH_SECRET:your-refresh-token-secret-key-here-make-it-different-and-long}
       expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
+async:
+  binaryContent:
+    corePoolSize: 6
+    maxPoolSize: 12
+    queueCapacity: 10
+  notification:
+    corePoolSize: 6
+    maxPoolSize: 12
+    queueCapacity: 10
 
 logging:
   level:
