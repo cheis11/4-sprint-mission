@@ -33,7 +33,7 @@ public class NotificationRequiredEventListener {
     this.readStatusRepository = readStatusRepository;
   }
 
-//  @Async
+  @Async
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void on(MessageCreatedEvent event) {
@@ -62,7 +62,7 @@ public class NotificationRequiredEventListener {
     log.info("NotificationRequiredEventListener class: {}", this.getClass());
   }
 
-//  @Async
+  @Async
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void on(RoleUpdatedEvent event) {
