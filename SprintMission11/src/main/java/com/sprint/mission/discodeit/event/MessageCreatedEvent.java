@@ -13,14 +13,14 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Async
 public class MessageCreatedEvent extends ApplicationEvent {
 
-  private final User author;
-  private final Channel channel;
+  private final UUID authorId;
+  private final UUID channelId;
   private final String content;
 
-  public MessageCreatedEvent(Object source, User author, Channel channel, String content) {
+  public MessageCreatedEvent(Object source, UUID authorId, UUID channelId, String content) {
     super(source);
-    this.author = author;
-    this.channel = channel;
+    this.authorId = authorId;
+    this.channelId = channelId;
     this.content = content;
   }
 }

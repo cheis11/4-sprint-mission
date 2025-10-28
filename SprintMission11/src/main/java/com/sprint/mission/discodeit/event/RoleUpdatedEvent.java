@@ -11,6 +11,7 @@ public class RoleUpdatedEvent extends ApplicationEvent {
   private final UUID userId;
   private final Role role;
   private final Role newRole;
+
   public RoleUpdatedEvent(Object source, UUID userId, Role role, Role newRole) {
     super(source);
     this.userId = userId;
