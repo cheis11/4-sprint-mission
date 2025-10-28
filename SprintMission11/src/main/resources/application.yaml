@@ -27,6 +27,23 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  cache:
+    type: redis
+    cache-names:
+      - channels
+      - notifications
+      - users
+    caffeine:
+      spec: >
+        maximumSize=100,
+        expireAfterAccess=600s,
+        recordStats
+    redis:
+      enable-statistics: true
+    data:
+      redis:
+        host: ${REDIS_HOST:localhost}
+        port: ${REDIS_PORT:6379}
 
 management:
   endpoints:
@@ -91,12 +108,6 @@ async:
     corePoolSize: 6
     maxPoolSize: 12
     queueCapacity: 10
-cache:
-  caffeine:
-    spec: >
-      maximumSize=100,
-      expireAfterAccess=600s,
-      recordStats
 logging:
   level:
     root: info
