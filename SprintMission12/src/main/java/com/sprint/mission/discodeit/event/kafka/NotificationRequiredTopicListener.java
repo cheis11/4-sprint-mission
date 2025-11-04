@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.event.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Notification;
@@ -42,25 +43,24 @@ public class NotificationRequiredTopicListener {
     try {
       MessageCreatedEvent event = objectMapper.readValue(kafkaEvent, MessageCreatedEvent.class);
 
-      User author = userRepository.findById(event.getAuthorId())
-          .orElseThrow(UserNotFoundException::new);
-      Channel channel = channelRepository.findById(event.getChannelId())
+      UserDto author = event.getData().author();
+      Channel channel = channelRepository.findById(event.getData().channelId())
           .orElseThrow(ChannelNotFoundException::new);
-      String title = author.getUsername() + "(#" + channel.getName() + ")";
+      String title = author.username() + "(#" + channel.getName() + ")";
       if (channel.getType() == ChannelType.PRIVATE) {
         System.out.println("This is Private Channel");
-        title = author.getUsername();
+        title = author.username();
       }
 
       List<User> users = readStatusRepository
           .findAllByChannelIdWithUser(channel.getId()).stream()
           .filter(ReadStatus::isNotificationEnabled)
           .map(ReadStatus::getUser)
-          .filter(u -> !u.getId().equals(author.getId()))
+          .filter(u -> !u.getId().equals(author.id()))
           .toList();
 
       for (User user : users) {
-        Notification notification = new Notification(user, title, event.getContent());
+        Notification notification = new Notification(user, title, event.getData().content());
         notificationRepository.save(notification);
       }
 

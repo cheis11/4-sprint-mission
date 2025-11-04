@@ -89,7 +89,7 @@ public class BasicMessageService implements MessageService {
     messageRepository.save(message);
     log.info("메시지 생성 완료: id={}, channelId={}", message.getId(), channelId);
     log.debug("트랜잭션 활성화 여부: {}", TransactionSynchronizationManager.isActualTransactionActive());
-    publisher.publishEvent(new MessageCreatedEvent(this, author.getId(), channel.getId(), content));
+    publisher.publishEvent(new MessageCreatedEvent(this, messageMapper.toDto(message)));
     return messageMapper.toDto(message);
   }
 

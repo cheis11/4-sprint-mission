@@ -1,26 +1,19 @@
 package com.sprint.mission.discodeit.event;
 
-import com.sprint.mission.discodeit.entity.Channel;
-import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.dto.data.MessageDto;
 import java.util.UUID;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Getter
 @Async
 public class MessageCreatedEvent extends ApplicationEvent {
 
-  private final UUID authorId;
-  private final UUID channelId;
-  private final String content;
+  private final MessageDto data;
 
-  public MessageCreatedEvent(Object source, UUID authorId, UUID channelId, String content) {
+  public MessageCreatedEvent(Object source, MessageDto data) {
     super(source);
-    this.authorId = authorId;
-    this.channelId = channelId;
-    this.content = content;
+    this.data = data;
   }
 }
