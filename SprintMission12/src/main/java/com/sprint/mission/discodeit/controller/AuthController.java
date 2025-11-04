@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController implements AuthApi {
 
   private final AuthService authService;
+  private final UserService userService;
   private final JwtTokenProvider jwtTokenProvider;
 
   @GetMapping("csrf-token")

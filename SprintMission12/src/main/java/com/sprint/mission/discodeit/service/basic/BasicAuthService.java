@@ -6,7 +6,7 @@ import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.RoleUpdateRequest;
 import com.sprint.mission.discodeit.entity.Role;
 import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.event.RoleUpdatedEvent;
+import com.sprint.mission.discodeit.event.message.RoleUpdatedEvent;
 import com.sprint.mission.discodeit.exception.DiscodeitException;
 import com.sprint.mission.discodeit.exception.ErrorCode;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
@@ -36,7 +36,7 @@ public class BasicAuthService implements AuthService {
   private final JwtRegistry jwtRegistry;
   private final JwtTokenProvider tokenProvider;
   private final UserDetailsService userDetailsService;
-  private final ApplicationEventPublisher publisher;
+  private final ApplicationEventPublisher eventPublisher;
 
   @PreAuthorize("hasRole('ADMIN')")
   @Transactional
@@ -51,12 +51,16 @@ public class BasicAuthService implements AuthService {
     UUID userId = request.userId();
     User user = userRepository.findById(userId)
         .orElseThrow(() -> UserNotFoundException.withId(userId));
-    Role userRole = user.getRole();
+
+    Role previousRole = user.getRole();
     Role newRole = request.newRole();
     user.updateRole(newRole);
 
     jwtRegistry.invalidateJwtInformationByUserId(userId);
-    publisher.publishEvent(new RoleUpdatedEvent(this, request.userId(), userRole, request.newRole()));
+    eventPublisher.publishEvent(
+        new RoleUpdatedEvent(user.getId(), previousRole, newRole, user.getUpdatedAt())
+    );
+
     return userMapper.toDto(user);
   }
 

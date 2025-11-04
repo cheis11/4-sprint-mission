@@ -6,14 +6,13 @@ import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.event.BinaryContentCreatedEvent;
+import com.sprint.mission.discodeit.event.message.BinaryContentCreatedEvent;
 import com.sprint.mission.discodeit.exception.user.UserAlreadyExistsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.UserMapper;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.UserService;
-import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,13 +34,11 @@ public class BasicUserService implements UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final BinaryContentRepository binaryContentRepository;
-  private final BinaryContentStorage binaryContentStorage;
   private final PasswordEncoder passwordEncoder;
+  private final ApplicationEventPublisher eventPublisher;
 
-  private final ApplicationEventPublisher publisher;
-
+  @CacheEvict(value = "users", key = "'all'")
   @Transactional
-  @CacheEvict(value = "users", allEntries = true)
   @Override
   public UserDto create(UserCreateRequest userCreateRequest,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
@@ -65,8 +62,11 @@ public class BasicUserService implements UserService {
           BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
               contentType);
           binaryContentRepository.save(binaryContent);
-//          binaryContentStorage.put(binaryContent.getId(), bytes);
-          publisher.publishEvent(new BinaryContentCreatedEvent(this, binaryContent.getId(),bytes));
+          eventPublisher.publishEvent(
+              new BinaryContentCreatedEvent(
+                  binaryContent, binaryContent.getCreatedAt(), bytes
+              )
+          );
           return binaryContent;
         })
         .orElse(null);
@@ -91,12 +91,11 @@ public class BasicUserService implements UserService {
     return userDto;
   }
 
-  @Cacheable("users")
+  @Cacheable(value = "users", key = "'all'", unless = "#result.isEmpty()")
   @Transactional(readOnly = true)
   @Override
   public List<UserDto> findAll() {
     log.debug("모든 사용자 조회 시작");
-    log.info("findAll() 호출 - 캐시 적용 여부 확인");
     List<UserDto> userDtos = userRepository.findAllWithProfile()
         .stream()
         .map(userMapper::toDto)
@@ -105,6 +104,7 @@ public class BasicUserService implements UserService {
     return userDtos;
   }
 
+  @CacheEvict(value = "users", key = "'all'")
   @PreAuthorize("principal.userDto.id == #userId")
   @Transactional
   @Override
@@ -138,8 +138,11 @@ public class BasicUserService implements UserService {
           BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
               contentType);
           binaryContentRepository.save(binaryContent);
-//          binaryContentStorage.put(binaryContent.getId(), bytes);
-          publisher.publishEvent(new BinaryContentCreatedEvent(this, binaryContent.getId(),bytes));
+          eventPublisher.publishEvent(
+              new BinaryContentCreatedEvent(
+                  binaryContent, binaryContent.getCreatedAt(), bytes
+              )
+          );
           return binaryContent;
         })
         .orElse(null);
@@ -153,6 +156,7 @@ public class BasicUserService implements UserService {
     return userMapper.toDto(user);
   }
 
+  @CacheEvict(value = "users", key = "'all'")
   @PreAuthorize("principal.userDto.id == #userId")
   @Transactional
   @Override

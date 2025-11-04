@@ -1,6 +1,5 @@
 package com.sprint.mission.discodeit.entity;
 
-import com.sprint.mission.discodeit.entity.base.BaseEntity;
 import com.sprint.mission.discodeit.entity.base.BaseUpdatableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,13 +24,13 @@ public class BinaryContent extends BaseUpdatableEntity {
   private String contentType;
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private BinaryContentStatus status;
+  private BinaryContentStatus status = BinaryContentStatus.PROCESSING;
+
 
   public BinaryContent(String fileName, Long size, String contentType) {
     this.fileName = fileName;
     this.size = size;
     this.contentType = contentType;
-    this.status = BinaryContentStatus.PROCESSING;
   }
 
   public void updateStatus(BinaryContentStatus status) {

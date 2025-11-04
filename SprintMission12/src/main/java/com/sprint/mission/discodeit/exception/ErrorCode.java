@@ -33,6 +33,7 @@ public enum ErrorCode {
 
   // Notification 관련 에러 코드
   NOTIFICATION_NOT_FOUND("알림을 찾을 수 없습니다."),
+  NOTIFICATION_FORBIDDEN("알림을 삭제할 권한이 없습니다."),
   ;
 
   private final String message;

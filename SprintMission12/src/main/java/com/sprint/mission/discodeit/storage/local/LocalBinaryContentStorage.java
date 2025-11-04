@@ -1,7 +1,6 @@
 package com.sprint.mission.discodeit.storage.local;
 
 import com.sprint.mission.discodeit.dto.data.BinaryContentDto;
-import com.sprint.mission.discodeit.service.NotificationService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -11,8 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.InputStreamResource;
@@ -20,9 +17,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 @ConditionalOnProperty(name = "discodeit.storage.type", havingValue = "local")
@@ -30,14 +24,11 @@ import org.springframework.stereotype.Component;
 public class LocalBinaryContentStorage implements BinaryContentStorage {
 
   private final Path root;
-  private final NotificationService notificationService;
 
   public LocalBinaryContentStorage(
-      @Value("${discodeit.storage.local.root-path}") Path root,
-      NotificationService notificationService
+      @Value("${discodeit.storage.local.root-path}") Path root
   ) {
     this.root = root;
-    this.notificationService = notificationService;
   }
 
   @PostConstruct
@@ -52,17 +43,8 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     }
   }
 
-  @Retryable(
-      maxAttempts = 5,
-      backoff = @Backoff(delay = 2000)
-  )
   public UUID put(UUID binaryContentId, byte[] bytes) {
-    try {
-      Thread.sleep(3000);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new RuntimeException("Thread interrupted while simulating delay", e);
-    }
+    delay(4);
     Path filePath = resolvePath(binaryContentId);
     if (Files.exists(filePath)) {
       throw new IllegalArgumentException("File with key " + binaryContentId + " already exists");
@@ -73,16 +55,6 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
       throw new RuntimeException(e);
     }
     return binaryContentId;
-  }
-
-  @Recover
-  public UUID recover(IOException e, UUID binaryContentId, byte[] bytes) {
-    String requestId = MDC.get("requestId");
-    String errorMessage = e.getMessage();
-
-    notificationService.notifyFailure(requestId,binaryContentId,errorMessage);
-
-    return null;
   }
 
   public InputStream get(UUID binaryContentId) {

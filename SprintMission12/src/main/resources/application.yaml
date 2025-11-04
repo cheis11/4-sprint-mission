@@ -11,22 +11,11 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
-    show-sql: true
   profiles:
     active:
       - dev
   config:
     import: optional:file:.env[.properties]
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: discodeit-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   cache:
     type: redis
     cache-names:
@@ -40,16 +29,26 @@ spring:
         recordStats
     redis:
       enable-statistics: true
-    data:
-      redis:
-        host: ${REDIS_HOST:localhost}
-        port: ${REDIS_PORT:6379}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: discodeit-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,loggers,caches
+        include: health,info,metrics,loggers
   endpoint:
     health:
       show-details: always
@@ -90,7 +89,7 @@ discodeit:
       presigned-url-expiration: ${AWS_S3_PRESIGNED_URL_EXPIRATION:600} # (기본값: 10분)
   admin:
     username: ${DISCODEIT_ADMIN_USERNAME:admin}
-    email: ${DISCODEIT_ADMIN_EMAIL:admin@example.com}
+    email: ${DISCODEIT_ADMIN_EMAIL:admin@email.com}
     password: ${DISCODEIT_ADMIN_PASSWORD:1234}
   jwt:
     access-token:
@@ -99,15 +98,7 @@ discodeit:
     refresh-token:
       secret: ${JWT_REFRESH_SECRET:your-refresh-token-secret-key-here-make-it-different-and-long}
       expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
-async:
-  binaryContent:
-    corePoolSize: 6
-    maxPoolSize: 12
-    queueCapacity: 10
-  notification:
-    corePoolSize: 6
-    maxPoolSize: 12
-    queueCapacity: 10
+
 logging:
   level:
     root: info
