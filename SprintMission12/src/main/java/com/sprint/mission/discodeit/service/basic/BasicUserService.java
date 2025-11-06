@@ -36,6 +36,7 @@ public class BasicUserService implements UserService {
   private final BinaryContentRepository binaryContentRepository;
   private final PasswordEncoder passwordEncoder;
   private final ApplicationEventPublisher eventPublisher;
+  private final BasicSseService basicSseService;
 
   @CacheEvict(value = "users", key = "'all'")
   @Transactional
@@ -77,6 +78,9 @@ public class BasicUserService implements UserService {
 
     userRepository.save(user);
     log.info("사용자 생성 완료: id={}, username={}", user.getId(), username);
+
+    UserDto userDto = userMapper.toDto(user);
+    basicSseService.broadcast("users.created", userDto);
     return userMapper.toDto(user);
   }
 
@@ -153,6 +157,11 @@ public class BasicUserService implements UserService {
     user.update(newUsername, newEmail, encodedPassword, nullableProfile);
 
     log.info("사용자 수정 완료: id={}", userId);
+
+    UserDto userDto = userMapper.toDto(user);
+
+    basicSseService.broadcast("users.updated", userDto);
+
     return userMapper.toDto(user);
   }
 
@@ -163,11 +172,14 @@ public class BasicUserService implements UserService {
   public void delete(UUID userId) {
     log.debug("사용자 삭제 시작: id={}", userId);
 
-    if (!userRepository.existsById(userId)) {
-      throw UserNotFoundException.withId(userId);
-    }
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> UserNotFoundException.withId(userId));
 
     userRepository.deleteById(userId);
     log.info("사용자 삭제 완료: id={}", userId);
+
+    UserDto userDto = userMapper.toDto(user);
+
+    basicSseService.broadcast("users.deleted", userDto);
   }
 }

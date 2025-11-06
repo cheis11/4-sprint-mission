@@ -8,12 +8,14 @@ import com.sprint.mission.discodeit.event.message.BinaryContentCreatedEvent;
 import com.sprint.mission.discodeit.exception.binarycontent.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
+import com.sprint.mission.discodeit.security.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.service.BinaryContentService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class BasicBinaryContentService implements BinaryContentService {
   private final BinaryContentRepository binaryContentRepository;
   private final BinaryContentMapper binaryContentMapper;
   private final ApplicationEventPublisher eventPublisher;
+  private final BasicSseService basicSseService;
 
   @Transactional
   @Override
@@ -93,6 +96,22 @@ public class BasicBinaryContentService implements BinaryContentService {
         .orElseThrow(() -> BinaryContentNotFoundException.withId(binaryContentId));
     binaryContent.updateStatus(status);
     binaryContentRepository.save(binaryContent);
-    return binaryContentMapper.toDto(binaryContent);
+
+    BinaryContentDto dto = binaryContentMapper.toDto(binaryContent);
+
+    UUID receiverId = ((DiscodeitUserDetails) SecurityContextHolder
+        .getContext()
+        .getAuthentication()
+        .getPrincipal())
+        .getUserDto()
+        .id();
+
+    basicSseService.send(
+        List.of(receiverId),
+        "binaryContents.updated",
+        dto
+    );
+
+    return dto;
   }
 }
